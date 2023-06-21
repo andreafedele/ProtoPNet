@@ -1,0 +1,8 @@
+# Mac OS hidden files
+.DS_Store
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+
+# Datasets
+datasets

@@ -1,19 +1,23 @@
 base_architecture = 'vgg19'
-img_size = 224
-prototype_shape = (2000, 128, 1, 1)
-num_classes = 200
+img_size = 225
+img_channels = 1
+prototype_shape = (600, 128, 1, 1)
+num_classes = 60
 prototype_activation_function = 'log'
 add_on_layers_type = 'regular'
 
-experiment_run = '003'
+experiment_run = '001'
 
-data_path = './datasets/cub200_cropped/'
-train_dir = data_path + 'train_cropped_augmented/'
-test_dir = data_path + 'test_cropped/'
-train_push_dir = data_path + 'train_cropped/'
-train_batch_size = 80
-test_batch_size = 100
-train_push_batch_size = 75
+data_path = './datasets/audiomnist_split'
+train_dir = data_path + '/train/'
+test_dir = data_path + '/test/'
+train_push_dir = data_path + '/train_augmented/'
+train_annotation_dir = data_path + 'annotations_train.csv'
+test_annotation_dir = data_path + 'annotations_test.csv'
+train_push_annotation_dir = data_path + 'annotations_train_augmented.csv'
+train_batch_size = 10
+test_batch_size = 30
+train_push_batch_size = 25
 
 joint_optimizer_lrs = {'features': 1e-4,
                        'add_on_layers': 3e-3,
@@ -37,3 +41,16 @@ num_warm_epochs = 5
 
 push_start = 10
 push_epochs = [i for i in range(num_train_epochs) if i % 10 == 0]
+
+# --- audio input data-type integration ---
+# audio sample rate
+sample_rate = 41000
+num_samples = 41000
+
+# spectrogram conversion
+n_fft = 4096
+hop_length = 183
+n_mels = 225
+
+# power spectrogram or dB units spect
+power_or_db = 'p' # power spectrogram 'p', decibel dB units 'd'

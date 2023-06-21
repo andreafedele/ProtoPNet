@@ -1,3 +1,4 @@
+import torch
 import torch.nn as nn
 import torch.utils.model_zoo as model_zoo
 
@@ -23,7 +24,7 @@ cfg = {
 
 class VGG_features(nn.Module):
 
-    def __init__(self, cfg, batch_norm=False, init_weights=True):
+    def __init__(self, cfg, batch_norm=False, init_weights=True, img_channels=1):
         super(VGG_features, self).__init__()
 
         self.batch_norm = batch_norm
@@ -31,6 +32,7 @@ class VGG_features(nn.Module):
         self.kernel_sizes = []
         self.strides = []
         self.paddings = []
+        self.img_channels = img_channels
 
         self.features = self._make_layers(cfg, batch_norm)
 
@@ -59,7 +61,7 @@ class VGG_features(nn.Module):
         self.n_layers = 0
 
         layers = []
-        in_channels = 3
+        in_channels = self.img_channels 
         for v in cfg:
             if v == 'M':
                 layers += [nn.MaxPool2d(kernel_size=2, stride=2)]
@@ -118,6 +120,7 @@ def vgg11_features(pretrained=False, **kwargs):
                 keys_to_remove.add(key)
         for key in keys_to_remove:
             del my_dict[key]
+        my_dict = _preprocess_my_dict(my_dict) if kwargs['img_channels'] == 1 else my_dict
         model.load_state_dict(my_dict, strict=False)
     return model
 
@@ -139,6 +142,7 @@ def vgg11_bn_features(pretrained=False, **kwargs):
                 keys_to_remove.add(key)
         for key in keys_to_remove:
             del my_dict[key]
+        my_dict = _preprocess_my_dict(my_dict) if kwargs['img_channels'] == 1 else my_dict
         model.load_state_dict(my_dict, strict=False)
     return model
 
@@ -160,6 +164,7 @@ def vgg13_features(pretrained=False, **kwargs):
                 keys_to_remove.add(key)
         for key in keys_to_remove:
             del my_dict[key]
+        my_dict = _preprocess_my_dict(my_dict) if kwargs['img_channels'] == 1 else my_dict
         model.load_state_dict(my_dict, strict=False)
     return model
 
@@ -181,6 +186,7 @@ def vgg13_bn_features(pretrained=False, **kwargs):
                 keys_to_remove.add(key)
         for key in keys_to_remove:
             del my_dict[key]
+        my_dict = _preprocess_my_dict(my_dict) if kwargs['img_channels'] == 1 else my_dict
         model.load_state_dict(my_dict, strict=False)
     return model
 
@@ -202,6 +208,7 @@ def vgg16_features(pretrained=False, **kwargs):
                 keys_to_remove.add(key)
         for key in keys_to_remove:
             del my_dict[key]
+        my_dict = _preprocess_my_dict(my_dict) if kwargs['img_channels'] == 1 else my_dict
         model.load_state_dict(my_dict, strict=False)
     return model
 
@@ -223,6 +230,7 @@ def vgg16_bn_features(pretrained=False, **kwargs):
                 keys_to_remove.add(key)
         for key in keys_to_remove:
             del my_dict[key]
+        my_dict = _preprocess_my_dict(my_dict) if kwargs['img_channels'] == 1 else my_dict
         model.load_state_dict(my_dict, strict=False)
     return model
 
@@ -244,6 +252,7 @@ def vgg19_features(pretrained=False, **kwargs):
                 keys_to_remove.add(key)
         for key in keys_to_remove:
             del my_dict[key]
+        my_dict = _preprocess_my_dict(my_dict) if kwargs['img_channels'] == 1 else my_dict
         model.load_state_dict(my_dict, strict=False)
     return model
 
@@ -265,9 +274,13 @@ def vgg19_bn_features(pretrained=False, **kwargs):
                 keys_to_remove.add(key)
         for key in keys_to_remove:
             del my_dict[key]
+        my_dict = _preprocess_my_dict(my_dict) if kwargs['img_channels'] == 1 else my_dict
         model.load_state_dict(my_dict, strict=False)
     return model
 
+def _preprocess_my_dict(my_dict):
+    my_dict['features.0.weight'] = torch.mean(my_dict['features.0.weight'], dim=1, keepdim=True) # faccio la media dei kernel dei 3 canali della preallenata solo per il primo layer conv
+    return my_dict
 
 if __name__ == '__main__':
 

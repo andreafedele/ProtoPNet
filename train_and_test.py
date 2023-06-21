@@ -3,6 +3,15 @@ import torch
 
 from helpers import list_of_distances, make_one_hot
 
+def _pre_process_label(label):
+    if torch.is_tensor(label) == False:
+        # for audio_dataset, cust labels to string is required to tensor conversion
+        target = torch.tensor([int(el) - 1 for el in label])
+    else:
+        target = label
+
+    return target.cuda(), target
+
 def _train_or_test(model, dataloader, optimizer=None, class_specific=True, use_l1_mask=True,
                    coefs=None, log=print):
     '''
@@ -19,11 +28,11 @@ def _train_or_test(model, dataloader, optimizer=None, class_specific=True, use_l
     total_cluster_cost = 0
     # separation cost is meaningful only for class_specific
     total_separation_cost = 0
-    total_avg_separation_cost = 0
+    total_avg_separation_cost = 0    
 
     for i, (image, label) in enumerate(dataloader):
         input = image.cuda()
-        target = label.cuda()
+        target, label = _pre_process_label(label)
 
         # torch.enable_grad() has no effect outside of no_grad()
         grad_req = torch.enable_grad() if is_train else torch.no_grad()

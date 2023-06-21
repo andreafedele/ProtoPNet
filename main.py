@@ -19,14 +19,17 @@ import save
 from log import create_logger
 from preprocess import mean, std, preprocess_input_function
 
+import torchaudio
+from audio_dataset import AudioDataset
+
 parser = argparse.ArgumentParser()
 parser.add_argument('-gpuid', nargs=1, type=str, default='0') # python3 main.py -gpuid=0,1,2,3
 args = parser.parse_args()
 os.environ['CUDA_VISIBLE_DEVICES'] = args.gpuid[0]
-print(os.environ['CUDA_VISIBLE_DEVICES'])
+# print(os.environ['CUDA_VISIBLE_DEVICES'])
 
 # book keeping namings and code
-from settings import base_architecture, img_size, prototype_shape, num_classes, \
+from settings import base_architecture, img_size, img_channels, prototype_shape, num_classes, \
                      prototype_activation_function, add_on_layers_type, experiment_run
 
 base_architecture_type = re.match('^[a-z]*', base_architecture).group(0)
@@ -48,45 +51,38 @@ prototype_self_act_filename_prefix = 'prototype-self-act'
 proto_bound_boxes_filename_prefix = 'bb'
 
 # load the data
-from settings import train_dir, test_dir, train_push_dir, \
-                     train_batch_size, test_batch_size, train_push_batch_size
+from settings import train_dir, test_dir, train_push_dir, train_annotation_dir, test_annotation_dir, train_push_annotation_dir, train_batch_size, test_batch_size, train_push_batch_size, \
+    sample_rate, num_samples, n_fft, hop_length, n_mels, power_or_db
 
-normalize = transforms.Normalize(mean=mean,
-                                 std=std)
+mel_spectrogram_transformation = torchaudio.transforms.MelSpectrogram(
+    sample_rate=sample_rate,
+    n_fft=n_fft,
+    hop_length=hop_length,
+    n_mels=n_mels
+)
 
-# all datasets
-# train set
-train_dataset = datasets.ImageFolder(
-    train_dir,
-    transforms.Compose([
-        transforms.Resize(size=(img_size, img_size)),
-        transforms.ToTensor(),
-        normalize,
-    ]))
+# train dataset
+train_dataset = AudioDataset(train_annotation_dir, train_dir, sample_rate, num_samples, mel_spectrogram_transformation, power_or_db)
 train_loader = torch.utils.data.DataLoader(
     train_dataset, batch_size=train_batch_size, shuffle=True,
-    num_workers=4, pin_memory=False)
-# push set
-train_push_dataset = datasets.ImageFolder(
-    train_push_dir,
-    transforms.Compose([
-        transforms.Resize(size=(img_size, img_size)),
-        transforms.ToTensor(),
-    ]))
+    num_workers=4, pin_memory=False
+)
+print(f"There are {len(train_dataset)} samples in the train dataset.")
+
+train_push_dataset = AudioDataset(train_push_annotation_dir, train_push_dir, sample_rate, num_samples, mel_spectrogram_transformation, power_or_db) 
 train_push_loader = torch.utils.data.DataLoader(
     train_push_dataset, batch_size=train_push_batch_size, shuffle=False,
-    num_workers=4, pin_memory=False)
-# test set
-test_dataset = datasets.ImageFolder(
-    test_dir,
-    transforms.Compose([
-        transforms.Resize(size=(img_size, img_size)),
-        transforms.ToTensor(),
-        normalize,
-    ]))
+    num_workers=4, pin_memory=False
+)
+
+# test dataset
+test_dataset = AudioDataset(test_annotation_dir, test_dir, sample_rate, num_samples, mel_spectrogram_transformation, power_or_db)
+print(f"There are {len(test_dataset)} samples in the test dataset.")
 test_loader = torch.utils.data.DataLoader(
     test_dataset, batch_size=test_batch_size, shuffle=False,
-    num_workers=4, pin_memory=False)
+    num_workers=4, pin_memory=False
+)
+
 
 # we should look into distributed sampler more carefully at torch.utils.data.distributed.DistributedSampler(train_dataset)
 log('training set size: {0}'.format(len(train_loader.dataset)))
@@ -100,7 +96,8 @@ ppnet = model.construct_PPNet(base_architecture=base_architecture,
                               prototype_shape=prototype_shape,
                               num_classes=num_classes,
                               prototype_activation_function=prototype_activation_function,
-                              add_on_layers_type=add_on_layers_type)
+                              add_on_layers_type=add_on_layers_type,
+                              img_channels=img_channels)
 #if prototype_activation_function == 'linear':
 #    ppnet.set_last_layer_incorrect_connection(incorrect_strength=0)
 ppnet = ppnet.cuda()
@@ -146,9 +143,8 @@ for epoch in range(num_train_epochs):
                       class_specific=class_specific, coefs=coefs, log=log)
     else:
         tnt.joint(model=ppnet_multi, log=log)
+        _ = tnt.train(model=ppnet_multi, dataloader=train_loader, optimizer=joint_optimizer, class_specific=class_specific, coefs=coefs, log=log)
         joint_lr_scheduler.step()
-        _ = tnt.train(model=ppnet_multi, dataloader=train_loader, optimizer=joint_optimizer,
-                      class_specific=class_specific, coefs=coefs, log=log)
 
     accu = tnt.test(model=ppnet_multi, dataloader=test_loader,
                     class_specific=class_specific, log=log)
@@ -160,7 +156,7 @@ for epoch in range(num_train_epochs):
             train_push_loader, # pytorch dataloader (must be unnormalized in [0,1])
             prototype_network_parallel=ppnet_multi, # pytorch network with prototype_vectors
             class_specific=class_specific,
-            preprocess_input_function=preprocess_input_function, # normalize if needed
+            preprocess_input_function=None, # normalize if needed
             prototype_layer_stride=1,
             root_dir_for_saving_prototypes=img_dir, # if not None, prototypes will be saved here
             epoch_number=epoch, # if not provided, prototypes saved previously will be overwritten

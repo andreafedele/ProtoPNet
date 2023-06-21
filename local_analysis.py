@@ -24,6 +24,9 @@ from preprocess import mean, std, preprocess_input_function, undo_preprocess_inp
 
 import argparse
 
+import torchaudio
+from audio_dataset import AudioDataset
+
 parser = argparse.ArgumentParser()
 parser.add_argument('-gpuid', nargs=1, type=str, default='0')
 parser.add_argument('-modeldir', nargs=1, type=str)
@@ -82,25 +85,28 @@ max_dist = prototype_shape[1] * prototype_shape[2] * prototype_shape[3]
 
 class_specific = True
 
-normalize = transforms.Normalize(mean=mean,
-                                 std=std)
+# normalize = transforms.Normalize(mean=mean,  std=std)
 
 # load the test data and check test accuracy
-from settings import test_dir
+from settings import test_dir, test_annotation_dir, sample_rate, num_samples, n_fft, hop_length, n_mels
+
 if check_test_accu:
     test_batch_size = 100
 
-    test_dataset = datasets.ImageFolder(
-        test_dir,
-        transforms.Compose([
-            transforms.Resize(size=(img_size, img_size)),
-            transforms.ToTensor(),
-            normalize,
-        ]))
+    mel_spectrogram_transformation = torchaudio.transforms.MelSpectrogram(
+        sample_rate=sample_rate,
+        n_fft=n_fft,
+        hop_length=hop_length,
+        n_mels=n_mels
+    )
+
+    # test dataset
+    test_dataset = AudioDataset(test_annotation_dir, test_dir, sample_rate, num_samples, mel_spectrogram_transformation)
+    print(f"There are {len(test_dataset)} samples in the test dataset.")
     test_loader = torch.utils.data.DataLoader(
-        test_dataset, batch_size=test_batch_size, shuffle=True,
-        num_workers=4, pin_memory=False)
-    log('test set size: {0}'.format(len(test_loader.dataset)))
+        test_dataset, batch_size=test_batch_size, shuffle=False,
+        num_workers=4, pin_memory=False
+    )
 
     accu = tnt.test(model=ppnet_multi, dataloader=test_loader,
                     class_specific=class_specific, log=print)
@@ -126,14 +132,13 @@ else:
 ##### HELPER FUNCTIONS FOR PLOTTING
 def save_preprocessed_img(fname, preprocessed_imgs, index=0):
     img_copy = copy.deepcopy(preprocessed_imgs[index:index+1])
-    undo_preprocessed_img = undo_preprocess_input_function(img_copy)
     print('image index {0} in batch'.format(index))
-    undo_preprocessed_img = undo_preprocessed_img[0]
-    undo_preprocessed_img = undo_preprocessed_img.detach().cpu().numpy()
-    undo_preprocessed_img = np.transpose(undo_preprocessed_img, [1,2,0])
+    img_copy = img_copy[0]
+    img_copy = img_copy.detach().cpu().numpy()
+    img_copy = np.transpose(img_copy, [1,2,0])
     
-    plt.imsave(fname, undo_preprocessed_img)
-    return undo_preprocessed_img
+    plt.imsave(fname, img_copy)
+    return img_copy
 
 def save_prototype(fname, epoch, index):
     p_img = plt.imread(os.path.join(load_img_dir, 'epoch-'+str(epoch), 'prototype-img'+str(index)+'.png'))
@@ -141,8 +146,7 @@ def save_prototype(fname, epoch, index):
     plt.imsave(fname, p_img)
     
 def save_prototype_self_activation(fname, epoch, index):
-    p_img = plt.imread(os.path.join(load_img_dir, 'epoch-'+str(epoch),
-                                    'prototype-img-original_with_self_act'+str(index)+'.png'))
+    p_img = plt.imread(os.path.join(load_img_dir, 'epoch-'+str(epoch), 'prototype-img-original_with_self_act'+str(index)+'.png'))
     #plt.axis('off')
     plt.imsave(fname, p_img)
 
@@ -170,14 +174,8 @@ def imsave_with_bbox(fname, img_rgb, bbox_height_start, bbox_height_end,
     plt.imsave(fname, img_rgb_float)
 
 # load the test image and forward it through the network
-preprocess = transforms.Compose([
-   transforms.Resize((img_size,img_size)),
-   transforms.ToTensor(),
-   normalize
-])
-
 img_pil = Image.open(test_image_path)
-img_tensor = preprocess(img_pil)
+img_tensor = torch.tensor(img_pil)
 img_variable = Variable(img_tensor.unsqueeze(0))
 
 images_test = img_variable.cuda()
@@ -201,8 +199,7 @@ predicted_cls = tables[idx][0]
 correct_cls = tables[idx][1]
 log('Predicted: ' + str(predicted_cls))
 log('Actual: ' + str(correct_cls))
-original_img = save_preprocessed_img(os.path.join(save_analysis_path, 'original_img.png'),
-                                     images_test, idx)
+original_img = save_preprocessed_img(os.path.join(save_analysis_path, 'original_img.png'), images_test, idx)
 
 ##### MOST ACTIVATED (NEAREST) 10 PROTOTYPES OF THIS IMAGE
 makedir(os.path.join(save_analysis_path, 'most_activated_prototypes'))
