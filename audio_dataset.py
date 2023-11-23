@@ -8,7 +8,7 @@ import torchaudio
 from torch.utils.data import Dataset
 
 class AudioDataset(Dataset):
-    def __init__(self, annotations_file,  audio_dir, target_sample_rate, num_samples, transformation, power_or_db):
+    def __init__(self, annotations_file,  audio_dir, target_sample_rate, num_samples, transformation, power_or_db, cut_dimensions = None):
         self.annotations = pd.read_csv(annotations_file, dtype={'label':'string'})
         # self.annotations = pd.read_csv(annotations_file)
         self.audio_dir = audio_dir
@@ -18,6 +18,7 @@ class AudioDataset(Dataset):
         #self.transformation = transformation.to(self.device)
         self.transformation = transformation
         self.power_or_db = power_or_db
+        self.cut_dimensions = cut_dimensions
 
     def __len__(self):
         return len(self.annotations)
@@ -25,6 +26,23 @@ class AudioDataset(Dataset):
     def __getitem__(self, index):
         audio_sample_path = self._get_audio_sample_path(index)
         label = self._get_audio_sample_label(index)
+        # signal, sr = torchaudio.load(audio_sample_path)
+
+        # # signal = signal.to(self.device)
+        # signal = self._resample(signal, sr)
+        # signal = self._cut_if_necessary(signal)
+        # signal = self._right_pad_if_necessary(signal)
+        # signal = self.transformation(signal)
+        # if self.power_or_db == 'd':
+        #     signal = librosa.power_to_db(signal)
+
+        # if self.cut_dimensions:
+        #     signal = signal[:, :self.cut_dimensions[0], :self.cut_dimensions[1]]
+
+        signal = self._get_signal_from_audio_path(audio_sample_path)
+        return signal, label
+    
+    def _get_signal_from_audio_path(self, audio_sample_path):
         signal, sr = torchaudio.load(audio_sample_path)
 
         # signal = signal.to(self.device)
@@ -35,8 +53,11 @@ class AudioDataset(Dataset):
         if self.power_or_db == 'd':
             signal = librosa.power_to_db(signal)
 
-        return signal, label
-    
+        if self.cut_dimensions:
+            signal = signal[:, :self.cut_dimensions[0], :self.cut_dimensions[1]]
+
+        return signal
+
     def _cut_if_necessary(self, signal):
         if signal.shape[1] > self.num_samples:
             signal = signal[:, :self.num_samples]

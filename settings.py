@@ -8,10 +8,10 @@ add_on_layers_type = 'regular'
 
 experiment_run = '001'
 
-data_path = './datasets/audiomnist_split'
-train_dir = data_path + '/train/'
-test_dir = data_path + '/test/'
-train_push_dir = data_path + '/train_augmented/'
+data_path = './datasets/audiomnist_split/'
+train_dir = data_path + 'train/'
+test_dir = data_path + 'test/'
+train_push_dir = data_path + 'train_augmented/'
 train_annotation_dir = data_path + 'annotations_train.csv'
 test_annotation_dir = data_path + 'annotations_test.csv'
 train_push_annotation_dir = data_path + 'annotations_train_augmented.csv'
@@ -41,6 +41,11 @@ num_warm_epochs = 5
 
 push_start = 10
 push_epochs = [i for i in range(num_train_epochs) if i % 10 == 0]
+last_layer_convex_optimizations = 3 # 20 si hard-coded by default in ProtoPNet
+
+# --- train early stopping ---
+es_last_n_epochs = 5 # last n epochs to watch in order to verify if convergence was reached on train accuracy
+es_conv_threshold = 0.01 # convergency threshold, if std(acc(last_n_epochs)) < thr then convergence has been reached
 
 # --- audio input data-type integration ---
 # audio sample rate

@@ -1,6 +1,10 @@
 import os
 import torch
+import statistics
 import numpy as np
+
+def get_std_dev(arr):
+    return statistics.stdev(arr)
 
 def list_of_distances(X, Y):
     return torch.sum((torch.unsqueeze(X, dim=2) - torch.unsqueeze(Y.t(), dim=0)) ** 2, dim=1)
