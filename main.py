@@ -187,10 +187,10 @@ for epoch in range(num_train_epochs):
                 accu, _obj = tnt.test(model=ppnet_multi, dataloader=test_loader, class_specific=class_specific, log=log)
                 save.save_model_w_condition(model=ppnet, model_dir=model_dir, model_name=str(epoch) + '_' + str(i) + 'push', accu=accu, target_accu=0.70, log=log)
     
-    if epoch >= (es_last_n_epochs + num_warm_epochs):
+    if epoch >= es_last_n_epochs + num_warm_epochs:
         print(train_accs)
-        print(train_accs[epoch - es_last_n_epochs:epoch])
-        std_dev = get_std_dev(train_accs[epoch - es_last_n_epochs:epoch])
+        print(train_accs[len(train_accs)-es_last_n_epochs:len(train_accs)])
+        std_dev = get_std_dev(train_accs[len(train_accs)-es_last_n_epochs:len(train_accs)])
         training_acc_converged = True if std_dev < es_conv_threshold else False
 
     if training_acc_converged and clust_cost_smaller_than_sep_cost:
