@@ -6,3 +6,9 @@ __pycache__/
 
 # Datasets
 datasets
+
+# Saved models
+saved_models
+
+# Pretrained models
+pretrained_models
