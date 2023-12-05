@@ -1,0 +1,3 @@
+load model from ./saved_models/vgg19/002/240push0.9267.pth
+model base architecture: saved_models
+experiment run: vgg19/002

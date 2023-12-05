@@ -230,9 +230,11 @@ def imsave_with_bbox(fname, img_rgb, bbox_height_start, bbox_height_end,
 # img_pil = Image.open(test_image_path)
 # img_tensor = torch.tensor(img_pil)
 img_variable = test_dataset._get_signal_from_audio_path(test_image_path)
-# img_variable = Variable(img_tensor.unsqueeze(0))
+print(img_variable.shape)
+img_tensor = torch.tensor(img_variable)
+img_variable = Variable(img_tensor.unsqueeze(0))
 
-images_test = torch.tensor(img_variable).cuda()
+images_test = img_variable.cuda()
 labels_test = torch.tensor([test_image_label])
 
 logits, min_distances = ppnet_multi(images_test)
