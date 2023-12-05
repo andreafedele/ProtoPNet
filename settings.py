@@ -58,4 +58,4 @@ hop_length = 183
 n_mels = 225
 
 # power spectrogram or dB units spect
-power_or_db = 'p' # power spectrogram 'p', decibel dB units 'd'
+power_or_db = 'd' # power spectrogram 'p', decibel dB units 'd'
