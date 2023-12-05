@@ -8,7 +8,7 @@ add_on_layers_type = 'regular'
 
 experiment_run = '001'
 
-data_path = './datasets/audiomnist_split/'
+data_path = '../datasets/audiomnist_split/'
 train_dir = data_path + 'train/'
 test_dir = data_path + 'test/'
 train_push_dir = data_path + 'train_augmented/'
