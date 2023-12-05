@@ -229,8 +229,8 @@ def imsave_with_bbox(fname, img_rgb, bbox_height_start, bbox_height_end,
 
 # img_pil = Image.open(test_image_path)
 # img_tensor = torch.tensor(img_pil)
-img_tensor = test_dataset._get_signal_from_audio_path(test_image_path)
-img_variable = Variable(img_tensor.unsqueeze(0))
+img_variable = test_dataset._get_signal_from_audio_path(test_image_path)
+# img_variable = Variable(img_tensor.unsqueeze(0))
 
 images_test = img_variable.cuda()
 labels_test = torch.tensor([test_image_label])
