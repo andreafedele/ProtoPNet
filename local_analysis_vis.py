@@ -34,8 +34,8 @@ def main():
 
     pred, truth = read_local_analysis_log(os.path.join(source_dir + 'local_analysis.log'))
 
-    print("Pred", pred)
-    print("Truth", truth)
+    print("Pred", int(pred))
+    print("Truth", int(truth))
 
     anno_opts_cen = dict(xy=(0.4, 0.5), xycoords='axes fraction',
                     va='center', ha='center')
