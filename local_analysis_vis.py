@@ -250,7 +250,7 @@ def main():
 
 def read_local_analysis_log(file_loc):
     log_file = open(file_loc, 'r')
-    for _ in range(7):
+    for _ in range(31):
         _ = log_file.readline()
     pred = log_file.readline()[len("Predicted: "):]
     actual = log_file.readline()[len("Actual: "):]
