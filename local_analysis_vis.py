@@ -28,11 +28,14 @@ def main():
     classname_dict = dict()
     for folder in next(os.walk(test_image_dir))[1]:
         classname_dict[int(folder[0:3])-1] = folder[4:]
-    print(classname_dict)
+    # print(classname_dict)
 
     os.makedirs(os.path.join(source_dir, 'visualizations_of_expl'), exist_ok=True)
 
     pred, truth = read_local_analysis_log(os.path.join(source_dir + 'local_analysis.log'))
+
+    print("Pred", pred)
+    print("Truth", truth)
 
     anno_opts_cen = dict(xy=(0.4, 0.5), xycoords='axes fraction',
                     va='center', ha='center')
