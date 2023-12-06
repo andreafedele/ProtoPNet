@@ -28,7 +28,7 @@ def main():
     classname_dict = dict()
     for folder in next(os.walk(test_image_dir))[1]:
         classname_dict[int(folder[0:3])-1] = folder[4:]
-    # print(classname_dict)
+    print(classname_dict)
 
     os.makedirs(os.path.join(source_dir, 'visualizations_of_expl'), exist_ok=True)
 
@@ -136,6 +136,8 @@ def main():
                     ax.get_yaxis().set_ticks([])
             #except:
                 #print("Exception ocurred. This can be caused by having <3 protos for one class.")
+        print(int(truth))
+        print(int(pred))
         f_axes[2][4].annotate(f"This {classname_dict[int(truth)]} is classified as a {classname_dict[int(pred)]}.", **anno_opts_sum)
         save_loc1 = os.path.join(source_dir, 'visualizations_of_expl') + f'/top-{top_c}_class.png'
         plt.savefig(save_loc1, bbox_inches='tight', pad_inches=0)
