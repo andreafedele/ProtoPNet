@@ -298,7 +298,7 @@ def update_prototypes_on_batch(search_batch_input,
                         # plt.imsave(os.path.join(dir_for_saving_prototypes, prototype_img_filename_prefix + '-receptive_field' + str(j) + '.png'), rf_img_j, vmin=0.0, vmax=1.0)
                         plt.imshow(rf_img_j, origin='lower')
                         plt.axis('off')
-                        plt.savefig(os.path.join(dir_for_saving_prototypes, prototype_img_filename_prefix + '-receptive_field' + str(j) + '.png', bbox_inches='tight'))
+                        plt.savefig(os.path.join(dir_for_saving_prototypes, prototype_img_filename_prefix + '-receptive_field' + str(j) + '.png'), bbox_inches='tight')
                         # np.save(os.path.join(dir_for_saving_prototypes, prototype_img_filename_prefix + '-receptive_field' + str(j) + '.npy'), rf_img_j)
                         plt.close()
                         plt.cla()
