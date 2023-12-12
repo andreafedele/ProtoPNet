@@ -149,7 +149,7 @@ def save_preprocessed_img(fname, preprocessed_imgs, index=0):
 
     plt.imshow(img_copy)
     plt.axis('off')
-    plt.savefig(fname)
+    plt.savefig(fname, bbox_inches='tight')
     
     # plt.imsave(fname, img_copy)
     return img_copy
