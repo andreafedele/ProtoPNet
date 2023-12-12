@@ -319,7 +319,7 @@ for i in range(1,6):
     
     plt.imshow(high_act_patch)
     plt.axis('off')
-    plt.savefig(os.path.join(save_analysis_path, 'most_activated_prototypes',  'most_highly_activated_patch_by_top-%d_prototype.png' % i))
+    plt.savefig(os.path.join(save_analysis_path, 'most_activated_prototypes',  'most_highly_activated_patch_by_top-%d_prototype.png' % i), bbox_inches='tight')
 
     log('most highly activated patch by this prototype shown in the original image:'
         + str(os.path.join(save_analysis_path, 'most_activated_prototypes',
@@ -347,7 +347,7 @@ for i in range(1,6):
     plt.imshow(original_img, cmap='gray')
     plt.imshow(heatmap, alpha=0.5)
     plt.axis('off')
-    plt.savefig(os.path.join(save_analysis_path, 'most_activated_prototypes', 'prototype_activation_map_by_top-%d_prototype.png' % i))
+    plt.savefig(os.path.join(save_analysis_path, 'most_activated_prototypes', 'prototype_activation_map_by_top-%d_prototype.png' % i), bbox_inches='tight')
 
     # show the image overlayed with different normalized prototype activation map
     rescaled_activation_pattern = upsampled_activation_pattern - np.amin(upsampled_activation_pattern)
@@ -370,7 +370,7 @@ for i in range(1,6):
     plt.imshow(original_img, cmap='gray')
     plt.imshow(heatmap, alpha=0.5)
     plt.axis('off')
-    plt.savefig(os.path.join(save_analysis_path, 'most_activated_prototypes', 'prototype_activation_map_by_top-%d_prototype_normed.png' % i))
+    plt.savefig(os.path.join(save_analysis_path, 'most_activated_prototypes', 'prototype_activation_map_by_top-%d_prototype_normed.png' % i), bbox_inches='tight')
 
     log('--------------------------------------------------------------')
 log('***************************************************************')
@@ -445,7 +445,7 @@ for i,c in enumerate(topk_classes.detach().cpu().numpy()):
         
         plt.imshow(high_act_patch)
         plt.axis('off')
-        plt.savefig(os.path.join(save_analysis_path, 'top-%d_class_prototypes' % (i+1),  'most_highly_activated_patch_by_top-%d_prototype.png' % prototype_cnt))
+        plt.savefig(os.path.join(save_analysis_path, 'top-%d_class_prototypes' % (i+1),  'most_highly_activated_patch_by_top-%d_prototype.png' % prototype_cnt), bbox_inches='tight')
         
         log('most highly activated patch by this prototype shown in the original image:' 
             + str(os.path.join(save_analysis_path, 'top-%d_class_prototypes' % (i+1),
@@ -474,7 +474,7 @@ for i,c in enumerate(topk_classes.detach().cpu().numpy()):
         plt.imshow(original_img, cmap='gray')
         plt.imshow(heatmap, alpha=0.5)
         plt.axis('off')
-        plt.savefig(os.path.join(save_analysis_path, 'top-%d_class_prototypes' % (i+1), 'prototype_activation_map_by_top-%d_prototype.png' % prototype_cnt))
+        plt.savefig(os.path.join(save_analysis_path, 'top-%d_class_prototypes' % (i+1), 'prototype_activation_map_by_top-%d_prototype.png' % prototype_cnt), bbox_inches='tight')
 
         # show the image overlayed with differently normed prototype activation map
         rescaled_activation_pattern = upsampled_activation_pattern - np.amin(upsampled_activation_pattern)
@@ -492,7 +492,7 @@ for i,c in enumerate(topk_classes.detach().cpu().numpy()):
         plt.imshow(original_img, cmap='gray')
         plt.imshow(heatmap, alpha=0.5)
         plt.axis('off')
-        plt.savefig(os.path.join(save_analysis_path, 'top-%d_class_prototypes' % (i+1), 'prototype_activation_map_by_top-%d_prototype_normed.png' % prototype_cnt))
+        plt.savefig(os.path.join(save_analysis_path, 'top-%d_class_prototypes' % (i+1), 'prototype_activation_map_by_top-%d_prototype_normed.png' % prototype_cnt), bbox_inches='tight')
 
         log('--------------------------------------------------------------')
         prototype_cnt += 1
