@@ -161,7 +161,7 @@ def save_prototype(fname, epoch, index):
     # plt.imsave(fname, p_img)
     plt.imshow(p_img)
     plt.axis('off')
-    plt.savefig(fname)
+    plt.savefig(fname, bbox_inches='tight')
     
 def save_prototype_self_activation(fname, epoch, index):
     # p_img = plt.imread(os.path.join(load_img_dir, 'epoch-'+str(epoch), 'prototype-img-original_bw_with_self_act'+str(index)+'.png'))
@@ -170,7 +170,7 @@ def save_prototype_self_activation(fname, epoch, index):
     # plt.imsave(fname, p_img)
     plt.imshow(p_img)
     plt.axis('off')
-    plt.savefig(fname)
+    plt.savefig(fname, bbox_inches='tight')
 
 def save_prototype_original_img_with_bbox(fname, epoch, index,
                                           bbox_height_start, bbox_height_end,
@@ -185,7 +185,7 @@ def save_prototype_original_img_with_bbox(fname, epoch, index,
     # plt.imsave(fname, p_img_rgb)
     plt.imshow(p_img_rgb)
     plt.axis('off')
-    plt.savefig(fname)
+    plt.savefig(fname, bbox_inches='tight')
 
 def save_prototype_full_size(fname, epoch, index,
                             color=(0, 255, 255)):
@@ -197,7 +197,7 @@ def save_prototype_full_size(fname, epoch, index,
     # plt.imsave(fname, p_img_rgb)
     plt.imshow(p_img_rgb)
     plt.axis('off')
-    plt.savefig(fname)
+    plt.savefig(fname, bbox_inches='tight')
 
 def imsave_with_bbox(fname, img_rgb, bbox_height_start, bbox_height_end,
                      bbox_width_start, bbox_width_end, color=(0, 255, 255)):
@@ -217,7 +217,7 @@ def imsave_with_bbox(fname, img_rgb, bbox_height_start, bbox_height_end,
     # plt.imsave(fname, img_rgb_float)
     plt.imshow(img_rgb_float)
     plt.axis('off')
-    plt.savefig(fname)
+    plt.savefig(fname, bbox_inches='tight')
 
 # load the test image and forward it through the network
 # preprocess = transforms.Compose([
