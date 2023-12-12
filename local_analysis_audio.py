@@ -164,7 +164,8 @@ def save_prototype(fname, epoch, index):
     plt.savefig(fname)
     
 def save_prototype_self_activation(fname, epoch, index):
-    p_img = plt.imread(os.path.join(load_img_dir, 'epoch-'+str(epoch), 'prototype-img-original_bw_with_self_act'+str(index)+'.png'))
+    # p_img = plt.imread(os.path.join(load_img_dir, 'epoch-'+str(epoch), 'prototype-img-original_bw_with_self_act'+str(index)+'.png'))
+    p_img = plt.imread(os.path.join(load_img_dir, 'epoch-'+str(epoch), 'prototype-img-original_with_self_act'+str(index)+'.png'))
     #plt.axis('off')
     # plt.imsave(fname, p_img)
     plt.imshow(p_img)
