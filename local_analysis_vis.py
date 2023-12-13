@@ -29,7 +29,7 @@ def main():
     for folder in next(os.walk(test_image_dir))[1]:
         classname_dict[int(folder)] = folder
         # classname_dict[int(folder[0:3])-1] = folder[4:]
-    # print(classname_dict)
+    print("created dict", classname_dict)
 
     os.makedirs(os.path.join(source_dir, 'visualizations_of_expl'), exist_ok=True)
 
