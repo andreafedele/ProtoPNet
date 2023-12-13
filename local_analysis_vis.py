@@ -29,7 +29,7 @@ def main():
     for folder in next(os.walk(test_image_dir))[1]:
         classname_dict[int(folder)] = folder
         # classname_dict[int(folder[0:3])-1] = folder[4:]
-    print(classname_dict)
+    # print(classname_dict)
 
     os.makedirs(os.path.join(source_dir, 'visualizations_of_expl'), exist_ok=True)
 
@@ -280,10 +280,12 @@ def read_info(info_file, classname_dict, per_class=False):
 
     # proto connection to class 0:tensor(1.8295e-07, grad_fn=<SelectBackward>)
     class_of_p = max(cc_dict, key=lambda k: cc_dict[k])
-    print(class_of_p, cc_dict)
+    # print(class_of_p, cc_dict)
     top_cc = cc_dict[class_of_p]
 
-    print(class_of_p)
+    print("classname_dict", classname_dict)
+    print("class_of_p", class_of_p)
+    print(type(class_of_p))
 
     class_str = classname_dict[class_of_p]
     top_cc_str = str(top_cc)
