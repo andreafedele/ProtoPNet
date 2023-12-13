@@ -29,14 +29,14 @@ def main():
     for folder in next(os.walk(test_image_dir))[1]:
         classname_dict[int(folder)] = folder
         # classname_dict[int(folder[0:3])-1] = folder[4:]
-    # print(classname_dict)
+    print(classname_dict)
 
     os.makedirs(os.path.join(source_dir, 'visualizations_of_expl'), exist_ok=True)
 
     pred, truth = read_local_analysis_log(os.path.join(source_dir + 'local_analysis.log'))
 
-    print("Pred", int(pred))
-    print("Truth", int(truth))
+    # print("Pred", int(pred))
+    # print("Truth", int(truth))
 
     anno_opts_cen = dict(xy=(0.4, 0.5), xycoords='axes fraction',
                     va='center', ha='center')
@@ -282,6 +282,8 @@ def read_info(info_file, classname_dict, per_class=False):
     class_of_p = max(cc_dict, key=lambda k: cc_dict[k])
     print(class_of_p, cc_dict)
     top_cc = cc_dict[class_of_p]
+
+    print(class_of_p)
 
     class_str = classname_dict[class_of_p]
     top_cc_str = str(top_cc)
