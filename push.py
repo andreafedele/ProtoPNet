@@ -268,7 +268,7 @@ def update_prototypes_on_batch(search_batch_input,
                     plt.imshow(original_img_j, origin='lower')
                     plt.axis('off')
                     plt.savefig(os.path.join(dir_for_saving_prototypes, prototype_img_filename_prefix + '-original' + str(j) + '.png'), bbox_inches='tight')
-                    # np.save(os.path.join(dir_for_saving_prototypes, prototype_img_filename_prefix + '-original' + str(j) + '.npy'), original_img_j)
+                    np.save(os.path.join(dir_for_saving_prototypes, prototype_img_filename_prefix + '-original' + str(j) + '.npy'), original_img_j)
                     plt.close()
                     plt.cla()
                     plt.clf()
@@ -288,7 +288,8 @@ def update_prototypes_on_batch(search_batch_input,
                     plt.savefig(os.path.join(dir_for_saving_prototypes, prototype_img_filename_prefix + '-original_with_self_act' + str(j) + '.png'),  bbox_inches='tight')
                     # np.save(os.path.join(dir_for_saving_prototypes, prototype_img_filename_prefix + '-original_bw_with_self_act' + str(j) + '.npy'), overlayed_original_img_j)
 
-                    # np.save(os.path.join(dir_for_saving_prototypes, prototype_img_filename_prefix + '-heatmap' + str(j) + '.npy'), heatmap)
+                    np.save(os.path.join(dir_for_saving_prototypes, prototype_img_filename_prefix + '-heatmap' + str(j) + '.npy'), heatmap)
+                    
                     plt.close()
                     plt.cla()
                     plt.clf()
