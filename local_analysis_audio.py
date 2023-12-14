@@ -147,7 +147,7 @@ def save_preprocessed_img(fname, preprocessed_imgs, index=0):
     img_copy = img_copy.detach().cpu().numpy()
     img_copy = np.transpose(img_copy, [1,2,0])
 
-    plt.imshow(img_copy)
+    plt.imshow(img_copy, origin='lower')
     plt.axis('off')
     plt.savefig(fname, bbox_inches='tight')
     
