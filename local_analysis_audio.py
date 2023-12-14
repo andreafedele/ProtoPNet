@@ -159,7 +159,7 @@ def save_prototype(fname, epoch, index):
     p_img = plt.imread(os.path.join(load_img_dir, 'epoch-'+str(epoch), 'prototype-img'+str(index)+'.png'))
     #plt.axis('off')
     # plt.imsave(fname, p_img)
-    plt.imshow(p_img)
+    plt.imshow(p_img, origin='lower')
     plt.axis('off')
     plt.savefig(fname, bbox_inches='tight')
     
@@ -168,7 +168,7 @@ def save_prototype_self_activation(fname, epoch, index):
     p_img = plt.imread(os.path.join(load_img_dir, 'epoch-'+str(epoch), 'prototype-img-original_with_self_act'+str(index)+'.png'))
     #plt.axis('off')
     # plt.imsave(fname, p_img)
-    plt.imshow(p_img)
+    plt.imshow(p_img, origin='lower')
     plt.axis('off')
     plt.savefig(fname, bbox_inches='tight')
 
@@ -337,7 +337,7 @@ for i in range(1,6):
     #plt.axis('off')
     # plt.imsave(os.path.join(save_analysis_path, 'most_activated_prototypes',  'most_highly_activated_patch_by_top-%d_prototype.png' % i), high_act_patch)
     
-    plt.imshow(high_act_patch)
+    plt.imshow(high_act_patch, origin='lower')
     plt.axis('off')
     plt.savefig(os.path.join(save_analysis_path, 'most_activated_prototypes',  'most_highly_activated_patch_by_top-%d_prototype.png' % i), bbox_inches='tight')
 
@@ -509,8 +509,8 @@ for i,c in enumerate(topk_classes.detach().cpu().numpy()):
         #plt.axis('off')
         # plt.imsave(os.path.join(save_analysis_path, 'top-%d_class_prototypes' % (i+1), 'prototype_activation_map_by_top-%d_prototype_normed.png' % prototype_cnt), overlayed_img)
         
-        plt.imshow(original_img, cmap='gray')
-        plt.imshow(heatmap, alpha=0.5)
+        plt.imshow(original_img, cmap='gray', origin='lower')
+        plt.imshow(heatmap, alpha=0.5, origin='lower')
         plt.axis('off')
         plt.savefig(os.path.join(save_analysis_path, 'top-%d_class_prototypes' % (i+1), 'prototype_activation_map_by_top-%d_prototype_normed.png' % prototype_cnt), bbox_inches='tight')
 
