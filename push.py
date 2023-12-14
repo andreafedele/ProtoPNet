@@ -283,7 +283,7 @@ def update_prototypes_on_batch(search_batch_input,
                     # plt.imsave(os.path.join(dir_for_saving_prototypes, prototype_img_filename_prefix + '-original_with_self_act' + str(j) + '.png'), overlayed_original_img_j, vmin=0.0, vmax=1.0)
                     # plt.imshow(overlayed_original_img_j)
                     plt.imshow(original_img_j, cmap='gray', origin='lower') # ci metto il gray altrimenti non capirei niente con la heatmap e i colori dello spettrogramma
-                    plt.imshow(heatmap, alpha=0.5)
+                    plt.imshow(heatmap, alpha=0.5, origin='lower')
                     plt.axis('off')
                     plt.savefig(os.path.join(dir_for_saving_prototypes, prototype_img_filename_prefix + '-original_with_self_act' + str(j) + '.png'),  bbox_inches='tight')
                     # np.save(os.path.join(dir_for_saving_prototypes, prototype_img_filename_prefix + '-original_bw_with_self_act' + str(j) + '.npy'), overlayed_original_img_j)
@@ -308,7 +308,7 @@ def update_prototypes_on_batch(search_batch_input,
                         # plt.imsave(os.path.join(dir_for_saving_prototypes, prototype_img_filename_prefix + '-receptive_field_with_self_act' + str(j) + '.png'), overlayed_rf_img_j, vmin=0.0, vmax=1.0)
                         # plt.imshow(overlayed_rf_img_j)
                         plt.imshow(original_img_j[rf_prototype_j[1]:rf_prototype_j[2], rf_prototype_j[3]:rf_prototype_j[4]], cmap='gray', origin='lower') # ci metto il gray altrimenti non capirei niente con la heatmap e i colori dello spettrogramma
-                        plt.imshow(heatmap[rf_prototype_j[1]:rf_prototype_j[2], rf_prototype_j[3]:rf_prototype_j[4]], alpha=0.5)
+                        plt.imshow(heatmap[rf_prototype_j[1]:rf_prototype_j[2], rf_prototype_j[3]:rf_prototype_j[4]], alpha=0.5, origin='lower')
                         plt.axis('off')
                         plt.savefig(os.path.join(dir_for_saving_prototypes, prototype_img_filename_prefix + '-receptive_field_with_self_act' + str(j) + '.png'), bbox_inches='tight')
                         # np.save(os.path.join(dir_for_saving_prototypes, prototype_img_filename_prefix + '-receptive_field_with_self_act' + str(j) + '.npy'), overlayed_rf_img_j)
