@@ -365,7 +365,7 @@ for i in range(1,6):
     # plt.imsave(os.path.join(save_analysis_path, 'most_activated_prototypes', 'prototype_activation_map_by_top-%d_prototype.png' % i), overlayed_img)
 
     plt.imshow(original_img, cmap='gray', origin='lower')
-    plt.imshow(heatmap, alpha=0.5)
+    plt.imshow(heatmap, alpha=0.5, origin='lower')
     plt.axis('off')
     plt.savefig(os.path.join(save_analysis_path, 'most_activated_prototypes', 'prototype_activation_map_by_top-%d_prototype.png' % i), bbox_inches='tight')
 
