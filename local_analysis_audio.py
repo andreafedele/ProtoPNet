@@ -188,6 +188,13 @@ def save_prototype_original_img_with_bbox(fname, epoch, index,
     # plt.savefig(fname, bbox_inches='tight')
 
 
+    np.save(fname.split('.png')[0] + 'p_img_bgr.png', p_img_bgr)
+    np.save(fname.split('.png')[0] + 'bbox_height_start.png', bbox_height_start)
+    np.save(fname.split('.png')[0] + 'bbox_height_end.png', bbox_height_end)
+    np.save(fname.split('.png')[0] + 'bbox_width_start.png', bbox_width_start)
+    np.save(fname.split('.png')[0] + 'bbox_width_end.png', bbox_width_end)
+
+
     p_img_rgb_copy = p_img_bgr.copy()
     img_rect = np.ones((p_img_rgb_copy.shape[0], p_img_rgb_copy.shape[1], 3), np.uint8) * 125
     cv2.rectangle(img_rect, (bbox_width_start, bbox_height_start), (bbox_width_end-1, bbox_height_end-1), color, 2)
