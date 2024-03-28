@@ -8,6 +8,7 @@ import time
 
 from receptive_field import compute_rf_prototype
 from helpers import makedir, find_high_activation_crop
+from tempfile import TemporaryFile
 
 # push each prototype to the nearest patch in the training set
 def push_prototypes(dataloader, # pytorch dataloader (must be unnormalized in [0,1])
@@ -263,6 +264,10 @@ def update_prototypes_on_batch(search_batch_input,
                     # save the numpy array of the prototype self activation
                     np.save(os.path.join(dir_for_saving_prototypes, prototype_self_act_filename_prefix + str(j) + '.npy'), proto_act_img_j)
                 if prototype_img_filename_prefix is not None:
+                    # save the spectrogram numpy itself
+                    outfile = TemporaryFile()
+                    np.savez(outfile, original_img_j, target_class)
+
                     # save the whole image containing the prototype as png
                     # plt.imsave(os.path.join(dir_for_saving_prototypes, prototype_img_filename_prefix + '-original' + str(j) + '.png'), original_img_j, vmin=0.0, vmax=1.0)
                     plt.imshow(original_img_j, origin='lower')
