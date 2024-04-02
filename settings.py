@@ -9,12 +9,12 @@ add_on_layers_type = 'regular'
 experiment_run = '001'
 
 data_path = '../datasets/audiomnist_split/'
-train_dir = data_path + 'train/'
+train_dir = data_path + 'train_augmented/'
 test_dir = data_path + 'test/'
-train_push_dir = data_path + 'train_augmented/'
-train_annotation_dir = data_path + 'annotations_train.csv'
+train_push_dir = data_path + 'train/'
+train_annotation_dir = data_path + 'annotations_train_augmented.csv'
 test_annotation_dir = data_path + 'annotations_test.csv'
-train_push_annotation_dir = data_path + 'annotations_train_augmented.csv'
+train_push_annotation_dir = data_path + 'annotations_train.csv'
 train_batch_size = 10
 test_batch_size = 30
 train_push_batch_size = 25
