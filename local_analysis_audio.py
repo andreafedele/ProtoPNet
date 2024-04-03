@@ -207,6 +207,10 @@ def save_prototype_original_img_with_bbox(fname, epoch, index,
 
 def save_prototype_full_size(fname, epoch, index,
                             color=(0, 255, 255)):
+    
+    p_full_size = np.load(os.path.join(load_img_dir, 'epoch-'+str(epoch), 'prototype-img-original'+str(index)+'.npy'))
+    np.save(fname[:-4] + '.npy', p_full_size)
+
     p_img_bgr = cv2.imread(os.path.join(load_img_dir, 'epoch-'+str(epoch), 'prototype-img-original'+str(index)+'.png'))
     p_img_rgb = p_img_bgr[...,::-1]
     p_img_rgb = np.float32(p_img_rgb) / 255

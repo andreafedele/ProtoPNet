@@ -264,7 +264,7 @@ def update_prototypes_on_batch(search_batch_input,
                     np.save(os.path.join(dir_for_saving_prototypes, prototype_self_act_filename_prefix + str(j) + '.npy'), proto_act_img_j)
                 if prototype_img_filename_prefix is not None:
                     # save the spectrogram numpy itself
-                    np.savez(os.path.join(dir_for_saving_prototypes, prototype_img_filename_prefix + '-original' + str(j) + '.npz'), original_img_j, target_class)
+                    np.save(os.path.join(dir_for_saving_prototypes, prototype_img_filename_prefix + '-original' + str(j) + '.npy'), original_img_j)
 
                     # save the whole image containing the prototype as png
                     # plt.imsave(os.path.join(dir_for_saving_prototypes, prototype_img_filename_prefix + '-original' + str(j) + '.png'), original_img_j, vmin=0.0, vmax=1.0)
