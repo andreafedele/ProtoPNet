@@ -2,6 +2,7 @@ import os
 import torch
 import argparse
 import torchaudio
+from sklearn.metrics import classification_report
 
 from audio_dataset import AudioDataset
 from torch.autograd import Variable
@@ -35,29 +36,29 @@ mel_spectrogram_transformation = torchaudio.transforms.MelSpectrogram(
 test_dataset = AudioDataset(test_annotation_dir, test_dir, sample_rate, num_samples, mel_spectrogram_transformation, power_or_db)
 print(f"There are {len(test_dataset)} samples in the test dataset.")
 
-# test_loader = torch.utils.data.DataLoader(
-#     test_dataset, batch_size=test_batch_size, shuffle=False,
-#     num_workers=4, pin_memory=False
-# )
+y_true, y_pred = [], []
+for x, y in test_dataset:
+    x_tensor = torch.tensor(x)
+    x = Variable(x_tensor.unsqueeze(0))
+    x = x.cuda()
 
-x, y = test_dataset[0]
+    y_torch = torch.tensor([int(y)])
 
-x_tensor = torch.tensor(x)
-# x = Variable(x_tensor.unsqueeze(0))
-x = x.cuda()
+    logits, min_distances = ppnet_multi(x)
+    tables = []
+    for i in range(logits.size(0)):
+        tables.append((torch.argmax(logits, dim=1)[i].item(), y_torch[i].item()))
+        print(str(i) + ' ' + str(tables[-1]))
 
-y_torch = torch.tensor([y])
+    predicted_cls = tables[0][0]
+    y_pred.append(predicted_cls)
+    y_true.append(int(y))
 
-logits, min_distances = ppnet_multi(x)
-tables = []
-for i in range(logits.size(0)):
-    tables.append((torch.argmax(logits, dim=1)[i].item(), y_torch[i].item()))
-    print(str(i) + ' ' + str(tables[-1]))
+    # print('Predicted: ' + str(predicted_cls))
+    # print('Actual: ' + str(int(y)))
 
-idx = 0
-predicted_cls = tables[idx][0]
-print('Predicted: ' + str(predicted_cls))
-print('Actual: ' + str(y))
+cr = classification_report(y_true, y_pred)
+print(cr)
 
 
 # for x, y in test_dataset:
@@ -67,10 +68,7 @@ print('Actual: ' + str(y))
 
 #     logits, min_distances = ppnet_multi(x)
 
-
 # labels_test = torch.tensor([test_image_label])
-
-
 
 # tables = []
 # for i in range(logits.size(0)):
