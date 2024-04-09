@@ -48,36 +48,10 @@ for x, y in test_dataset:
     tables = []
     for i in range(logits.size(0)):
         tables.append((torch.argmax(logits, dim=1)[i].item(), y_torch[i].item()))
-        print(str(i) + ' ' + str(tables[-1]))
 
     predicted_cls = tables[0][0]
     y_pred.append(predicted_cls)
     y_true.append(int(y))
 
-    # print('Predicted: ' + str(predicted_cls))
-    # print('Actual: ' + str(int(y)))
-
 cr = classification_report(y_true, y_pred)
 print(cr)
-
-
-# for x, y in test_dataset:
-#     x_tensor = torch.tensor(x)
-#     x = Variable(x_tensor.unsqueeze(0))
-#     x = x.cuda()
-
-#     logits, min_distances = ppnet_multi(x)
-
-# labels_test = torch.tensor([test_image_label])
-
-# tables = []
-# for i in range(logits.size(0)):
-#     tables.append((torch.argmax(logits, dim=1)[i].item(), labels_test[i].item()))
-#     log(str(i) + ' ' + str(tables[-1]))
-
-# idx = 0
-# predicted_cls = tables[idx][0]
-
-# correct_cls = test_image_label#tables[idx][1]
-# log('Predicted: ' + str(predicted_cls))
-# log('Actual: ' + str(correct_cls))
