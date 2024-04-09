@@ -34,14 +34,15 @@ mel_spectrogram_transformation = torchaudio.transforms.MelSpectrogram(
 test_dataset = AudioDataset(test_annotation_dir, test_dir, sample_rate, num_samples, mel_spectrogram_transformation, power_or_db)
 print(f"There are {len(test_dataset)} samples in the test dataset.")
 
-test_loader = torch.utils.data.DataLoader(
-    test_dataset, batch_size=test_batch_size, shuffle=False,
-    num_workers=4, pin_memory=False
-)
+# test_loader = torch.utils.data.DataLoader(
+#     test_dataset, batch_size=test_batch_size, shuffle=False,
+#     num_workers=4, pin_memory=False
+# )
 
-for x, y in test_loader:
+
+for x, y in test_dataset:
     print("y", y)
-    # print(data)
+
 
 
 # img_variable = test_dataset._get_signal_from_audio_path(test_image_path)
