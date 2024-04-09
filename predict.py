@@ -4,6 +4,7 @@ import argparse
 import torchaudio
 
 from audio_dataset import AudioDataset
+from torch.autograd import Variable
 
 # parsing model directory and model name to load
 parser = argparse.ArgumentParser()
@@ -43,23 +44,17 @@ print(f"There are {len(test_dataset)} samples in the test dataset.")
 for x, y in test_dataset:
     print("y", y)
 
+    # x = test_dataset._get_signal_from_audio_path(test_image_path)
+    x_tensor = torch.tensor(x)
+    x = Variable(x_tensor.unsqueeze(0))
+    x = x.cuda()
 
-
-# img_variable = test_dataset._get_signal_from_audio_path(test_image_path)
-# img_tensor = torch.tensor(img_variable)
-# img_variable = Variable(img_tensor.unsqueeze(0))
-# x = img_variable.cuda()
+    logits, min_distances = ppnet_multi(x)
 
 
 # labels_test = torch.tensor([test_image_label])
 
-# logits, min_distances = ppnet_multi(x)
-# conv_output, distances = ppnet.push_forward(x)
-# prototype_activations = ppnet.distance_2_similarity(min_distances)
-# prototype_activation_patterns = ppnet.distance_2_similarity(distances)
-# if ppnet.prototype_activation_function == 'linear':
-#     prototype_activations = prototype_activations + max_dist
-#     prototype_activation_patterns = prototype_activation_patterns + max_dist
+
 
 # tables = []
 # for i in range(logits.size(0)):
@@ -68,6 +63,7 @@ for x, y in test_dataset:
 
 # idx = 0
 # predicted_cls = tables[idx][0]
+
 # correct_cls = test_image_label#tables[idx][1]
 # log('Predicted: ' + str(predicted_cls))
 # log('Actual: ' + str(correct_cls))
