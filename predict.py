@@ -40,16 +40,32 @@ print(f"There are {len(test_dataset)} samples in the test dataset.")
 #     num_workers=4, pin_memory=False
 # )
 
+x, y = test_dataset[0]
 
-for x, y in test_dataset:
-    print("y", y)
+x_tensor = torch.tensor(x)
+# x = Variable(x_tensor.unsqueeze(0))
+x = x.cuda()
 
-    # x = test_dataset._get_signal_from_audio_path(test_image_path)
-    x_tensor = torch.tensor(x)
-    x = Variable(x_tensor.unsqueeze(0))
-    x = x.cuda()
+y_torch = torch.tensor([y])
 
-    logits, min_distances = ppnet_multi(x)
+logits, min_distances = ppnet_multi(x)
+tables = []
+for i in range(logits.size(0)):
+    tables.append((torch.argmax(logits, dim=1)[i].item(), y_torch[i].item()))
+    print(str(i) + ' ' + str(tables[-1]))
+
+idx = 0
+predicted_cls = tables[idx][0]
+print('Predicted: ' + str(predicted_cls))
+print('Actual: ' + str(y))
+
+
+# for x, y in test_dataset:
+#     x_tensor = torch.tensor(x)
+#     x = Variable(x_tensor.unsqueeze(0))
+#     x = x.cuda()
+
+#     logits, min_distances = ppnet_multi(x)
 
 
 # labels_test = torch.tensor([test_image_label])
