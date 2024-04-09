@@ -39,8 +39,9 @@ test_loader = torch.utils.data.DataLoader(
     num_workers=4, pin_memory=False
 )
 
-for data in test_loader:
-    print(data)
+for x, y in test_loader:
+    print("y", y)
+    # print(data)
 
 
 # img_variable = test_dataset._get_signal_from_audio_path(test_image_path)
