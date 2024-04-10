@@ -1,21 +1,21 @@
 base_architecture = 'vgg19'
 img_size = 225
 img_channels = 1
-prototype_shape = (600, 128, 1, 1)
-num_classes = 60
+prototype_shape = (500, 128, 1, 1)
+num_classes = 50
 prototype_activation_function = 'log'
 add_on_layers_type = 'regular'
 
-experiment_run = '001'
+experiment_run = '001_esc50'
 
-data_path = '../datasets/audiomnist_split/'
+data_path = '../datasets/esc50_split/'
 train_dir = data_path + 'train_augmented/'
 test_dir = data_path + 'test/'
 train_push_dir = data_path + 'train/'
 train_annotation_dir = data_path + 'annotations_train_augmented.csv'
 test_annotation_dir = data_path + 'annotations_test.csv'
 train_push_annotation_dir = data_path + 'annotations_train.csv'
-train_batch_size = 10
+train_batch_size = 27
 test_batch_size = 30
 train_push_batch_size = 25
 

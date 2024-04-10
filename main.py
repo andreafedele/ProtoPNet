@@ -195,6 +195,9 @@ for epoch in range(num_train_epochs):
 
     if training_acc_converged and clust_cost_smaller_than_sep_cost:
         log('Early stop training because: (1) training acc convergend && (2) cluster cost is smaller then separation cost on training set')
+        accu, _obj = tnt.test(model=ppnet_multi, dataloader=test_loader, class_specific=class_specific, log=log)
+        save.save_model_w_condition(model=ppnet, model_dir=model_dir, model_name=str(epoch) + 'push', accu=accu, target_accu=0.70, log=log)
+        
         break
 
 logclose()
