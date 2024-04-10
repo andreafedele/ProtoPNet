@@ -12,3 +12,5 @@ saved_models
 
 # Pretrained models
 pretrained_models
+
+settings.py
