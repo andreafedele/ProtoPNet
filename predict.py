@@ -9,8 +9,8 @@ from torch.autograd import Variable
 
 # parsing model directory and model name to load
 parser = argparse.ArgumentParser()
-parser.add_argument('-model_dir')
-parser.add_argument('-model_name')
+parser.add_argument('-model_dir', nargs=1, type=str, default='0')
+parser.add_argument('-model_name', nargs=1, type=str, default='0')
 args = parser.parse_args()
 
 model_dir = args.model_dir[0]
