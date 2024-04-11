@@ -15,8 +15,8 @@ args = parser.parse_args()
 
 model_dir = args.model_dir[0]
 model_name =  args.model_name[0] 
-# model_path = os.path.join(model_dir, model_name)
-model_path = './saved_models/vgg19/007/10_0push0.9571.pth'
+model_path = os.path.join(model_dir, model_name)
+# model_path = './saved_models/vgg19/007/10_0push0.9571.pth'
 
 # loading the model
 ppnet = torch.load(model_path)
