@@ -43,6 +43,8 @@ push_start = 10
 push_epochs = [i for i in range(num_train_epochs) if i % 10 == 0]
 last_layer_convex_optimizations = 3 # 20 si hard-coded by default in ProtoPNet
 
+target_accu = 0.50
+
 # --- train early stopping ---
 es_last_n_epochs = 5 # last n epochs to watch in order to verify if convergence was reached on train accuracy
 es_conv_threshold = 0.01 # convergency threshold, if std(acc(last_n_epochs)) < thr then convergence has been reached

@@ -137,7 +137,7 @@ from settings import coefs
 from settings import num_train_epochs, num_warm_epochs, push_start, push_epochs
 
 # early stopping on training set parameters
-from settings import es_last_n_epochs, es_conv_threshold
+from settings import es_last_n_epochs, es_conv_threshold, target_accu
 training_acc_converged = False
 clust_cost_smaller_than_sep_cost = False
 
@@ -159,7 +159,7 @@ for epoch in range(num_train_epochs):
         joint_lr_scheduler.step()
 
     accu, _obj = tnt.test(model=ppnet_multi, dataloader=test_loader, class_specific=class_specific, log=log)
-    save.save_model_w_condition(model=ppnet, model_dir=model_dir, model_name=str(epoch) + 'nopush', accu=accu, target_accu=0.70, log=log)
+    save.save_model_w_condition(model=ppnet, model_dir=model_dir, model_name=str(epoch) + 'nopush', accu=accu, target_accu=target_accu, log=log)
 
     if epoch >= push_start and epoch in push_epochs:
         push.push_prototypes(
@@ -177,7 +177,7 @@ for epoch in range(num_train_epochs):
             log=log)
         
         accu, _obj = tnt.test(model=ppnet_multi, dataloader=test_loader, class_specific=class_specific, log=log)
-        save.save_model_w_condition(model=ppnet, model_dir=model_dir, model_name=str(epoch) + 'push', accu=accu, target_accu=0.70, log=log)
+        save.save_model_w_condition(model=ppnet, model_dir=model_dir, model_name=str(epoch) + 'push', accu=accu, target_accu=target_accu, log=log)
 
         if prototype_activation_function != 'linear':
             tnt.last_only(model=ppnet_multi, log=log)
@@ -185,7 +185,7 @@ for epoch in range(num_train_epochs):
                 log('iteration: \t{0}'.format(i))
                 _, _obj = tnt.train(model=ppnet_multi, dataloader=train_loader, optimizer=last_layer_optimizer, class_specific=class_specific, coefs=coefs, log=log)
                 accu, _obj = tnt.test(model=ppnet_multi, dataloader=test_loader, class_specific=class_specific, log=log)
-                save.save_model_w_condition(model=ppnet, model_dir=model_dir, model_name=str(epoch) + '_' + str(i) + 'push', accu=accu, target_accu=0.70, log=log)
+                save.save_model_w_condition(model=ppnet, model_dir=model_dir, model_name=str(epoch) + '_' + str(i) + 'push', accu=accu, target_accu=target_accu, log=log)
     
     if epoch >= es_last_n_epochs + num_warm_epochs:
         print(train_accs)
@@ -196,8 +196,8 @@ for epoch in range(num_train_epochs):
     if training_acc_converged and clust_cost_smaller_than_sep_cost:
         log('Early stop training because: (1) training acc convergend && (2) cluster cost is smaller then separation cost on training set')
         accu, _obj = tnt.test(model=ppnet_multi, dataloader=test_loader, class_specific=class_specific, log=log)
-        save.save_model_w_condition(model=ppnet, model_dir=model_dir, model_name=str(epoch) + 'push', accu=accu, target_accu=0.70, log=log)
-        
+        save.save_model_w_condition(model=ppnet, model_dir=model_dir, model_name=str(epoch) + 'push', accu=accu, target_accu=target_accu, log=log)
+
         break
 
 logclose()
