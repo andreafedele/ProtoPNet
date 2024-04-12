@@ -139,9 +139,9 @@ log('Their class identities are: ' + str(prototype_img_identity))
 prototype_max_connection = torch.argmax(ppnet.last_layer.weight, dim=0)
 prototype_max_connection = prototype_max_connection.cpu().numpy()
 
-log("prototype max connection", prototype_max_connection)
-log("prototype img identity", prototype_img_identity)
-log("ppnet num prototypes", ppnet.num_prototypes)
+print("prototype max connection", prototype_max_connection)
+print("prototype img identity", prototype_img_identity)
+print("ppnet num prototypes", ppnet.num_prototypes)
 
 if np.sum(prototype_max_connection == prototype_img_identity) == ppnet.num_prototypes:
     log('All prototypes connect most strongly to their respective classes.')
@@ -419,7 +419,7 @@ log('***************************************************************')
 ##### PROTOTYPES FROM TOP-k CLASSES
 log('Prototypes from top-%d classes:' % k)
 topk_logits, topk_classes = torch.topk(logits[idx], k=k)
-log("top k classes", topk_classes)
+print("top k classes", topk_classes)
 for i,c in enumerate(topk_classes.detach().cpu().numpy()):
     makedir(os.path.join(save_analysis_path, 'top-%d_class_prototypes' % (i+1)))
 
@@ -429,7 +429,7 @@ for i,c in enumerate(topk_classes.detach().cpu().numpy()):
     class_prototype_activations = prototype_activations[idx][class_prototype_indices]
     _, sorted_indices_cls_act = torch.sort(class_prototype_activations)
 
-    log("sorted_indices_cls_act", sorted_indices_cls_act)
+    print("sorted_indices_cls_act", sorted_indices_cls_act)
 
     prototype_cnt = 1
     for j in reversed(sorted_indices_cls_act.detach().cpu().numpy()):
@@ -620,6 +620,6 @@ et = time.time()
 
 # get the execution time
 elapsed_time = et - st
-log('Execution time:', elapsed_time, 'seconds')
+print('Execution time:', elapsed_time, 'seconds')
 
 logclose()
