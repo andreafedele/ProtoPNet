@@ -129,7 +129,9 @@ load_img_dir = os.path.join(load_model_dir, 'img')
 
 prototype_info = np.load(os.path.join(load_img_dir, 'epoch-'+epoch_number_str, 'bb'+epoch_number_str+'.npy'))
 prototype_img_identity = prototype_info[:, -1]
-prototype_img_identity = np.array([identity -1 for identity in prototype_img_identity])
+prototype_img_identity = np.array([identity -1 for identity in prototype_img_identity]) 
+# rimuovo -1 da ciò che è stato salvato dal train perchè le label le img identity non le salva a partire da 0
+##  (usa i nomi delle cartelle che partono da 1)
 
 num_classes = len(set(prototype_img_identity))
 
@@ -420,7 +422,6 @@ log('***************************************************************')
 ##### PROTOTYPES FROM TOP-k CLASSES
 log('Prototypes from top-%d classes:' % k)
 topk_logits, topk_classes = torch.topk(logits[idx], k=k)
-print("top k classes", topk_classes)
 for i,c in enumerate(topk_classes.detach().cpu().numpy()):
     makedir(os.path.join(save_analysis_path, 'top-%d_class_prototypes' % (i+1)))
 
@@ -430,6 +431,8 @@ for i,c in enumerate(topk_classes.detach().cpu().numpy()):
     class_prototype_activations = prototype_activations[idx][class_prototype_indices]
     _, sorted_indices_cls_act = torch.sort(class_prototype_activations)
 
+    print("sorted_indices_cls_act", sorted_indices_cls_act)
+    sorted_indices_cls_act = sorted_indices_cls_act[0:5]
     print("sorted_indices_cls_act", sorted_indices_cls_act)
 
     prototype_cnt = 1
