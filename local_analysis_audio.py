@@ -142,10 +142,6 @@ log('Their class identities are: ' + str(prototype_img_identity))
 prototype_max_connection = torch.argmax(ppnet.last_layer.weight, dim=0)
 prototype_max_connection = prototype_max_connection.cpu().numpy()
 
-print("prototype max connection", prototype_max_connection)
-print("prototype img identity", prototype_img_identity)
-print("ppnet num prototypes", ppnet.num_prototypes)
-
 if np.sum(prototype_max_connection == prototype_img_identity) == ppnet.num_prototypes:
     log('All prototypes connect most strongly to their respective classes.')
 else:
@@ -329,6 +325,10 @@ for i in range(1,6):
                                                 'top-%d_activated_prototype_self_act.png' % i),
                                    start_epoch_number, sorted_indices_act[-i].item())
     log('prototype index: {0}'.format(sorted_indices_act[-i].item()))
+    
+    print("First term", prototype_max_connection[sorted_indices_act[-i].item()])
+    print("Second term", prototype_img_identity[sorted_indices_act[-i].item()])
+
     log('prototype class identity: {0}'.format(prototype_img_identity[sorted_indices_act[-i].item()]))
     if prototype_max_connection[sorted_indices_act[-i].item()] != prototype_img_identity[sorted_indices_act[-i].item()]:
         log('prototype connection identity: {0}'.format(prototype_max_connection[sorted_indices_act[-i].item()]))
@@ -431,10 +431,9 @@ for i,c in enumerate(topk_classes.detach().cpu().numpy()):
     class_prototype_activations = prototype_activations[idx][class_prototype_indices]
     _, sorted_indices_cls_act = torch.sort(class_prototype_activations)
 
-    print("sorted_indices_cls_act", sorted_indices_cls_act)
+    # cut to only top 5 prototypes for each of the top k classes
     sorted_indices_cls_act = sorted_indices_cls_act[0:5]
-    print("sorted_indices_cls_act", sorted_indices_cls_act)
-
+    
     prototype_cnt = 1
     for j in reversed(sorted_indices_cls_act.detach().cpu().numpy()):
         prototype_index = class_prototype_indices[j]
@@ -624,6 +623,6 @@ et = time.time()
 
 # get the execution time
 elapsed_time = et - st
-print('Execution time:', elapsed_time, 'seconds')
+log('Execution time (seconds): ' + str(elapsed_time / 60))
 
 logclose()
