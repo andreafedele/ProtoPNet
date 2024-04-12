@@ -432,13 +432,14 @@ for i,c in enumerate(topk_classes.detach().cpu().numpy()):
 
     makedir(os.path.join(save_analysis_path, 'top-%d_class_prototypes' % (i+1)))
 
-    log('top %d predicted class: %d' % (i+1, c))
+    log('top %d predicted class: %d' % (i+1, c + 1)) # c+1 predicted class for the same train_and_test reason 
     log('logit of the class: %f' % topk_logits[i])
 
     print("ppnet prototype class identity", ppnet.prototype_class_identity.detach().cpu().numpy())
 
     class_prototype_indices = np.nonzero(ppnet.prototype_class_identity.detach().cpu().numpy()[:, c])[0]
 
+    print("class_prototype_indices", class_prototype_indices)
     
     class_prototype_activations = prototype_activations[idx][class_prototype_indices]
     
@@ -447,7 +448,9 @@ for i,c in enumerate(topk_classes.detach().cpu().numpy()):
     _, sorted_indices_cls_act = torch.sort(class_prototype_activations)
 
     # cut to only top 5 prototypes for each of the top k classes
-    sorted_indices_cls_act = sorted_indices_cls_act[0:5]
+    # sorted_indices_cls_act = sorted_indices_cls_act[0:5]
+
+    print("sorted_indices_cls_act", sorted_indices_cls_act)
     
     prototype_cnt = 1
     for j in reversed(sorted_indices_cls_act.detach().cpu().numpy()):
@@ -476,9 +479,9 @@ for i,c in enumerate(topk_classes.detach().cpu().numpy()):
                                                     start_epoch_number, 
                                                     prototype_index)
         log('prototype index: {0}'.format(prototype_index))
-        log('prototype class identity: {0}'.format(prototype_img_identity[prototype_index]))
+        log('prototype class identity: {0}'.format(prototype_img_identity[prototype_index] + 1)) # qui è +1 solo per logging reasons (1 class label, lui nella pnet ce l'ha da 0)
         if prototype_max_connection[prototype_index] != prototype_img_identity[prototype_index]:
-            log('prototype connection identity: {0}'.format(prototype_max_connection[prototype_index]))
+            log('prototype connection identity: {0}'.format(prototype_max_connection[prototype_index] + 1)) # qui è +1 solo per logging reasons (1 class label, lui nella pnet ce l'ha da 0)
         log('activation value (similarity score): {0}'.format(prototype_activations[idx][prototype_index]))
         log('last layer connection: {0}'.format(ppnet.last_layer.weight[c][prototype_index]))
 
