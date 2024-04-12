@@ -282,7 +282,7 @@ for i in range(logits.size(0)):
     log(str(i) + ' ' + str(tables[-1]))
 
 idx = 0
-predicted_cls = tables[idx][0]
+predicted_cls = tables[idx][0] + 1
 correct_cls = test_image_label#tables[idx][1]
 log('Predicted: ' + str(predicted_cls))
 log('Actual: ' + str(correct_cls))

@@ -50,7 +50,7 @@ for x, y in test_dataset:
         tables.append((torch.argmax(logits, dim=1)[i].item(), y_torch[i].item()))
 
     predicted_cls = tables[0][0]
-    y_pred.append(predicted_cls + 1) # dovuto al fatto che lui le conta a partire da 0
+    y_pred.append(predicted_cls + 1) # dovuto al fatto che lui le conta a partire da 0 nella pre-process function di train_and_test.py
     y_true.append(int(y))
 
 cr = classification_report(y_true, y_pred)
