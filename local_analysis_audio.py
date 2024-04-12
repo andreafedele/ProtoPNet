@@ -285,9 +285,9 @@ for i in range(logits.size(0)):
     log(str(i) + ' ' + str(tables[-1]))
 
 idx = 0
-predicted_cls = tables[idx][0] + 1 # +1 predicted due to -1 assignment to labels in train_and_test.py
+predicted_cls = tables[idx][0] 
 correct_cls = test_image_label #tables[idx][1]
-log('Predicted: ' + str(predicted_cls))
+log('Predicted: ' + str(predicted_cls + 1)) # +1 predicted due to -1 assignment to labels in train_and_test.py
 log('Actual: ' + str(correct_cls))
 original_img = save_preprocessed_img(os.path.join(save_analysis_path, 'original_img.png'),
                                      images_test, idx)
@@ -331,9 +331,9 @@ for i in range(1,6):
     print("First term", prototype_max_connection[sorted_indices_act[-i].item()])
     print("Second term", prototype_img_identity[sorted_indices_act[-i].item()])
 
-    log('prototype class identity: {0}'.format(prototype_img_identity[sorted_indices_act[-i].item()]))
+    log('prototype class identity: {0}'.format(prototype_img_identity[sorted_indices_act[-i].item()] + 1)) # qui è +1 solo per logging reasons (1 class label, lui nella pnet ce l'ha da 0)
     if prototype_max_connection[sorted_indices_act[-i].item()] != prototype_img_identity[sorted_indices_act[-i].item()]:
-        log('prototype connection identity: {0}'.format(prototype_max_connection[sorted_indices_act[-i].item()]))
+        log('prototype connection identity: {0}'.format(prototype_max_connection[sorted_indices_act[-i].item()] + 1)) # qui è +1 solo per logging reasons (1 class label, lui nella pnet ce l'ha da 0)
     log('activation value (similarity score): {0}'.format(array_act[-i]))
 
     f = open(save_analysis_path + '/most_activated_prototypes/' + 'top-' + str(i) + '_activated_prototype.txt', "w")
@@ -345,7 +345,6 @@ for i in range(1,6):
         f.write(f'proto connection to class {class_id_}:')
         f.write(str(ppnet.last_layer.weight[class_id_][sorted_indices_act[-i].item()]) + '\n')
     f.close()
-
     log('last layer connection with predicted class: {0}'.format(ppnet.last_layer.weight[predicted_cls][sorted_indices_act[-i].item()]))
     
     activation_pattern = prototype_activation_patterns[idx][sorted_indices_act[-i].item()].detach().cpu().numpy()
@@ -547,7 +546,7 @@ log('***************************************************************')
 #     log('***************************************************************')
 
 
-if predicted_cls == correct_cls:
+if predicted_cls + 1 == correct_cls:
     log('Prediction is correct.')
 else:
     log('Prediction is wrong.')
