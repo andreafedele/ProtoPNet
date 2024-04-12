@@ -27,6 +27,7 @@ import pandas as pd
 import ast
 # import png
 
+import time
 import torchaudio
 from audio_dataset import AudioDataset
 
@@ -107,6 +108,9 @@ mel_spectrogram_transformation = torchaudio.transforms.MelSpectrogram(
 test_dataset = AudioDataset(test_annotation_dir, test_dir, sample_rate, num_samples, mel_spectrogram_transformation, power_or_db)
 print(f"There are {len(test_dataset)} samples in the test dataset.")
 
+# get the start time
+st = time.time()
+
 if check_test_accu:
     test_batch_size = 100
 
@@ -134,6 +138,11 @@ log('Their class identities are: ' + str(prototype_img_identity))
 # confirm prototype connects most strongly to its own class
 prototype_max_connection = torch.argmax(ppnet.last_layer.weight, dim=0)
 prototype_max_connection = prototype_max_connection.cpu().numpy()
+
+log("prototype max connection", prototype_max_connection)
+log("prototype img identity", prototype_img_identity)
+log("ppnet num prototypes", ppnet.num_prototypes)
+
 if np.sum(prototype_max_connection == prototype_img_identity) == ppnet.num_prototypes:
     log('All prototypes connect most strongly to their respective classes.')
 else:
@@ -406,10 +415,11 @@ for i in range(1,6):
     log('--------------------------------------------------------------')
 log('***************************************************************')
 log('***************************************************************')
-##### PROTOTYPES FROM TOP-k CLASSES
 
+##### PROTOTYPES FROM TOP-k CLASSES
 log('Prototypes from top-%d classes:' % k)
 topk_logits, topk_classes = torch.topk(logits[idx], k=k)
+log("top k classes", topk_classes)
 for i,c in enumerate(topk_classes.detach().cpu().numpy()):
     makedir(os.path.join(save_analysis_path, 'top-%d_class_prototypes' % (i+1)))
 
@@ -418,6 +428,8 @@ for i,c in enumerate(topk_classes.detach().cpu().numpy()):
     class_prototype_indices = np.nonzero(ppnet.prototype_class_identity.detach().cpu().numpy()[:, c])[0]
     class_prototype_activations = prototype_activations[idx][class_prototype_indices]
     _, sorted_indices_cls_act = torch.sort(class_prototype_activations)
+
+    log("sorted_indices_cls_act", sorted_indices_cls_act)
 
     prototype_cnt = 1
     for j in reversed(sorted_indices_cls_act.detach().cpu().numpy()):
@@ -602,5 +614,12 @@ def visualize_origninal_image(test_image_name, excel_dir, files_dir):
             plt.imsave(save_analysis_path + "/original_part_" + test_image_name, roi, cmap="gray")
 
             log("Successfully save original.")
+
+# get the end time
+et = time.time()
+
+# get the execution time
+elapsed_time = et - st
+log('Execution time:', elapsed_time, 'seconds')
 
 logclose()
