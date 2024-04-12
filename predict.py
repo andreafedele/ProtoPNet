@@ -53,42 +53,6 @@ for x, y in test_dataset:
     y_pred.append(predicted_cls + 1) # dovuto al fatto che lui le conta a partire da 0
     y_true.append(int(y))
 
-print("&&&&&&&&&&&&&&&&&&&&&&")
-print("&&&&& my predict &&&&&")
-print("&&&&&&&&&&&&&&&&&&&&&&")
-cr = classification_report(y_true, y_pred)
-print(cr)
-
-
-# ---- protop nested predict -----
-test_loader = torch.utils.data.DataLoader(
-    test_dataset, batch_size=test_batch_size, shuffle=False,
-    num_workers=4, pin_memory=False
-)
-
-def _pre_process_label(label):
-    if torch.is_tensor(label) == False:
-        # for audio_dataset, cust labels to string is required to tensor conversion
-        target = torch.tensor([int(el) - 1 for el in label])
-    else:
-        target = label
-
-    return target.cuda(), target
-
-y_true, y_pred = [], []
-for i, (image, label) in enumerate(test_loader):
-    input = image.cuda()
-    target, label = _pre_process_label(label)
-
-    output, min_distances = ppnet_multi(input)
-    _, predicted = torch.max(output.data, 1)
-    y_true.append(target)
-    y_pred.append(predicted)
-    #n_correct += (predicted == target).sum().item()
-
-print("&&&&&&&&&&&&&&&&&&&&&&")
-print("&&&&& pp predict &&&&&")
-print("&&&&&&&&&&&&&&&&&&&&&&")
 cr = classification_report(y_true, y_pred)
 print(cr)
 
