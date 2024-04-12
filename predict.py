@@ -42,7 +42,7 @@ for x, y in test_dataset:
     x = Variable(x_tensor.unsqueeze(0))
     x = x.cuda()
 
-    y_torch = torch.tensor([int(y) - 1])
+    y_torch = torch.tensor([int(y)])
 
     logits, min_distances = ppnet_multi(x)
     tables = []
@@ -50,7 +50,7 @@ for x, y in test_dataset:
         tables.append((torch.argmax(logits, dim=1)[i].item(), y_torch[i].item()))
 
     predicted_cls = tables[0][0]
-    y_pred.append(predicted_cls)
+    y_pred.append(predicted_cls + 1) # dovuto al fatto che lui le conta a partire da 0
     y_true.append(int(y))
 
 print("&&&&&&&&&&&&&&&&&&&&&&")
