@@ -129,6 +129,7 @@ load_img_dir = os.path.join(load_model_dir, 'img')
 
 prototype_info = np.load(os.path.join(load_img_dir, 'epoch-'+epoch_number_str, 'bb'+epoch_number_str+'.npy'))
 prototype_img_identity = prototype_info[:, -1]
+prototype_img_identity = np.array([identity -1 for identity in prototype_img_identity])
 
 num_classes = len(set(prototype_img_identity))
 
@@ -291,8 +292,8 @@ for i in range(logits.size(0)):
     log(str(i) + ' ' + str(tables[-1]))
 
 idx = 0
-predicted_cls = tables[idx][0] + 1
-correct_cls = test_image_label#tables[idx][1]
+predicted_cls = tables[idx][0] + 1 # +1 predicted due to -1 assignment to labels in train_and_test.py
+correct_cls = test_image_label #tables[idx][1]
 log('Predicted: ' + str(predicted_cls))
 log('Actual: ' + str(correct_cls))
 original_img = save_preprocessed_img(os.path.join(save_analysis_path, 'original_img.png'),
