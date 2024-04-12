@@ -42,7 +42,7 @@ for x, y in test_dataset:
     x = Variable(x_tensor.unsqueeze(0))
     x = x.cuda()
 
-    y_torch = torch.tensor([int(y)])
+    y_torch = torch.tensor([int(y) - 1])
 
     logits, min_distances = ppnet_multi(x)
     tables = []
@@ -55,3 +55,22 @@ for x, y in test_dataset:
 
 cr = classification_report(y_true, y_pred)
 print(cr)
+
+
+
+# def _pre_process_label(label):
+#     if torch.is_tensor(label) == False:
+#         # for audio_dataset, cust labels to string is required to tensor conversion
+#         target = torch.tensor([int(el) - 1 for el in label])
+#     else:
+#         target = label
+
+#     return target.cuda(), target
+
+#  for i, (image, label) in enumerate(dataloader):
+#     input = image.cuda()
+#     target, label = _pre_process_label(label)
+
+#     output, min_distances = model(input)
+#     _, predicted = torch.max(output.data, 1)
+#     n_correct += (predicted == target).sum().item()
