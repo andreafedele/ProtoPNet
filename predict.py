@@ -53,24 +53,43 @@ for x, y in test_dataset:
     y_pred.append(predicted_cls)
     y_true.append(int(y))
 
+print("&&&&&&&&&&&&&&&&&&&&&&")
+print("&&&&& my predict &&&&&")
+print("&&&&&&&&&&&&&&&&&&&&&&")
 cr = classification_report(y_true, y_pred)
 print(cr)
 
 
+# ---- protop nested predict -----
+test_loader = torch.utils.data.DataLoader(
+    test_dataset, batch_size=test_batch_size, shuffle=False,
+    num_workers=4, pin_memory=False
+)
 
-# def _pre_process_label(label):
-#     if torch.is_tensor(label) == False:
-#         # for audio_dataset, cust labels to string is required to tensor conversion
-#         target = torch.tensor([int(el) - 1 for el in label])
-#     else:
-#         target = label
+def _pre_process_label(label):
+    if torch.is_tensor(label) == False:
+        # for audio_dataset, cust labels to string is required to tensor conversion
+        target = torch.tensor([int(el) - 1 for el in label])
+    else:
+        target = label
 
-#     return target.cuda(), target
+    return target.cuda(), target
 
-#  for i, (image, label) in enumerate(dataloader):
-#     input = image.cuda()
-#     target, label = _pre_process_label(label)
+y_true, y_pred = [], []
+for i, (image, label) in enumerate(test_loader):
+    input = image.cuda()
+    target, label = _pre_process_label(label)
 
-#     output, min_distances = model(input)
-#     _, predicted = torch.max(output.data, 1)
-#     n_correct += (predicted == target).sum().item()
+    output, min_distances = ppnet_multi(input)
+    _, predicted = torch.max(output.data, 1)
+    y_true.append(target)
+    y_pred.append(predicted)
+    #n_correct += (predicted == target).sum().item()
+
+print("&&&&&&&&&&&&&&&&&&&&&&")
+print("&&&&& pp predict &&&&&")
+print("&&&&&&&&&&&&&&&&&&&&&&")
+cr = classification_report(y_true, y_pred)
+print(cr)
+
+# python predict.py -model_dir './saved_models/vgg19/001_esc50_split10/' -model_name '17push0.7400.pth'
