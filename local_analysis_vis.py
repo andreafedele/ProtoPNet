@@ -87,7 +87,7 @@ def main():
         for ax in [f_axes[r][5] for r in range(nrows)]:
             ax.annotate('=', **anno_opts_symb)
 
-        top_c_dir = os.path.join(source_dir + f'top-{top_c}_class_prototypes')
+        top_c_dir = os.path.join(source_dir, f'top-{top_c}_class_prototypes')
         for top_p in range(1,num_rows+1):
             #try:
                 h_axis = top_p - 1
@@ -264,7 +264,7 @@ def read_info(info_file, classname_dict, per_class=False):
     cc_dict = dict() 
     for i in range(len(classname_dict)):
         cc_line = info_file.readline()
-        circ_cc_str = cc_line[len('proto connection to class ' + str(i) + ':tensor('):-(len(", device='cuda:0', grad_fn=<SelectBackward>)")+2)]
+        circ_cc_str = cc_line[len('proto connection to class ' + str(i+1) + ':tensor('):-(len(", device='cuda:0', grad_fn=<SelectBackward>)")+2)]
         # circ_cc_str = cc_line[len('proto connection to class ' + str(i+1) + ':tensor('):-(len(", grad_fn=<SelectBackward>)")+1)]
         print(circ_cc_str, cc_line)
         circ_cc = float(circ_cc_str)
