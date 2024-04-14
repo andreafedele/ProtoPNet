@@ -182,7 +182,7 @@ def save_prototype_original_img_with_bbox(fname, epoch, index,
     # np.save(fname.split('.png')[0] + 'p_img_bgr.png', p_img_bgr)
     
     # saving bounding boxes of the original img (from training set) in one array
-    np.save(fname.split('.png')[0] + 'bboxes', bbox_height_start, bbox_height_end, bbox_width_start, bbox_width_end) 
+    np.save(fname.split('.png')[0] + 'bboxes', [bbox_height_start, bbox_height_end, bbox_width_start, bbox_width_end]) 
 
     p_img_rgb_copy = p_img_bgr.copy()
     img_rect = np.ones((p_img_rgb_copy.shape[0], p_img_rgb_copy.shape[1], 3), np.uint8) * 125
@@ -215,7 +215,7 @@ def imsave_with_bbox(fname, img_rgb, bbox_height_start, bbox_height_end,
     ## questa funzione invece viene solo chiamata dalla img di test vera e propria
 
     # saving bounding boxes of the TEST img (from TEST set) in one array
-    np.save(fname.split('.png')[0] + 'bboxes', bbox_height_start, bbox_height_end, bbox_width_start, bbox_width_end) 
+    np.save(fname.split('.png')[0] + 'bboxes', [bbox_height_start, bbox_height_end, bbox_width_start, bbox_width_end]) 
 
     img_rgb_copy = img_rgb.copy()
     img_rect = np.ones((img_rgb.shape[0], img_rgb.shape[1], 3), np.uint8) * 125
