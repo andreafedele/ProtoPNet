@@ -279,71 +279,7 @@ def read_info(info_file, classname_dict, per_class=False):
     top_cc_str = str(top_cc)
     return sim_score, cc_dict, class_str.replace('_', ' '), top_cc_str
 
-# def test():
 
-#     im = Image.open('./visualizations_of_expl/' + 'original_img.png')
-
-#     fig = plt.figure(constrained_layout=False)
-#     fig.set_size_inches(28, 12)
-
-#     ncols, nrows = 7, num_rows
-#     spec = gridspec.GridSpec(ncols=ncols, nrows=nrows, figure=fig)
-
-#     f_axes = []
-#     for row in range(nrows):
-#         f_axes.append([])
-#         for col in range(ncols):
-#             f_axes[-1].append(fig.add_subplot(spec[row, col]))
-
-#     plt.rcParams.update({'font.size': 15})
-
-#     for ax_num, ax in enumerate(f_axes[0]):
-#         if ax_num == 0:
-#             ax.set_title("Test image", fontdict=None, loc='left', color = "k")
-#         elif ax_num == 1:
-#             ax.set_title("Test image activation by prototype", fontdict=None, loc='left', color = "k")
-#         elif ax_num == 2:
-#             ax.set_title("Prototype", fontdict=None, loc='left', color = "k")
-#         elif ax_num == 3:
-#             ax.set_title("Self-activation of prototype", fontdict=None, loc='left', color = "k")
-#         elif ax_num == 4:
-#             ax.set_title("Similarity score", fontdict=None, loc='left', color = "k")
-#         elif ax_num == 5:
-#             ax.set_title("Class connection", fontdict=None, loc='left', color = "k")
-#         elif ax_num == 6:
-#             ax.set_title("Contribution", fontdict=None, loc='left', color = "k")
-#         else:
-#             pass
-
-#     plt.rcParams.update({'font.size': 22})
-
-#     for ax in [f_axes[r][0] for r in range(nrows)]:
-#         ax.imshow(im)
-#         ax.get_xaxis().set_ticks([])
-#         ax.get_yaxis().set_ticks([])
-
-
-#     anno_opts = dict(xy=(0.4, 0.5), xycoords='axes fraction',
-#                     va='center', ha='center')
-
-#     anno_opts_symb = dict(xy=(1, 0.5), xycoords='axes fraction',
-#                     va='center', ha='center')
-
-#     for ax in [f_axes[r][s] for r in range(nrows) for s in range(4,7)]:
-#         ax.annotate('Number', **anno_opts)
-#         ax.set_axis_off()
-
-#     for ax in [f_axes[r][4] for r in range(nrows)]:
-#         ax.annotate('x', **anno_opts_symb)
-
-#     for ax in [f_axes[r][5] for r in range(nrows)]:
-#         ax.annotate('=', **anno_opts_symb)
-
-#     os.makedirs('./visualizations_of_expl/', exist_ok=True)
-#     plt.savefig('./visualizations_of_expl/' + 'test.png')
-
-#     # Refs: https://stackoverflow.com/questions/40846492/how-to-add-text-to-each-image-using-imagegrid
-#     # https://stackoverflow.com/questions/41793931/plotting-images-side-by-side-using-matplotlib
 
 if __name__ == "__main__":
     main()

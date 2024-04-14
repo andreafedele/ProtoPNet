@@ -54,13 +54,6 @@ check_test_accu = False
 load_model_dir = args.test_model_dir[0] #'/usr/xtmp/mammo/alina_saved_models/vgg16/finer_1118_top2percent_randseed=1234/'
 load_model_name = args.test_model_name[0] # '100_9push0.9258.pth'
 
-#if load_model_dir[-1] == '/':
-#    model_base_architecture = load_model_dir.split('/')[-3]
-#    experiment_run = load_model_dir.split('/')[-2]
-#else:
-#    model_base_architecture = load_model_dir.split('/')[-2]
-#    experiment_run = load_model_dir.split('/')[-1]
-
 model_base_architecture = load_model_dir.split('/')[-3]
 experiment_run = '/'.join(load_model_dir.split('/')[-2:])
 
@@ -69,10 +62,6 @@ makedir(save_analysis_path)
 print(save_analysis_path)
 
 log, logclose = create_logger(log_filename=os.path.join(save_analysis_path, 'local_analysis.log')) #logger fails on Colab
-# def log(string_here):
-#     print(string_here)
-# def logclose():
-#     pass
 
 load_model_path = os.path.join(load_model_dir, load_model_name)
 epoch_number_str = re.search(r'\d+', load_model_name).group(0)
@@ -182,29 +171,22 @@ def save_prototype_self_activation(fname, epoch, index):
 def save_prototype_original_img_with_bbox(fname, epoch, index,
                                           bbox_height_start, bbox_height_end,
                                           bbox_width_start, bbox_width_end, color=(0, 255, 225)):
-    p_img_bgr = cv2.imread(os.path.join(load_img_dir, 'epoch-'+str(epoch), 'prototype-img-original'+str(index)+'.png'))
-    # cv2.rectangle(p_img_bgr, (bbox_width_start, bbox_height_start), (bbox_width_end-1, bbox_height_end-1),
-    #               color, thickness=2)
-    # p_img_rgb = p_img_bgr[...,::-1]
-    # p_img_rgb = np.float32(p_img_rgb) / 255
-    #plt.imshow(p_img_rgb)
-    #plt.axis('off')
-    # plt.imsave(fname, p_img_rgb)
-    # plt.imshow(p_img_rgb)
-    # plt.axis('off')
-    # plt.savefig(fname, bbox_inches='tight')
+    
 
 
-    np.save(fname.split('.png')[0] + 'p_img_bgr.png', p_img_bgr)
-    np.save(fname.split('.png')[0] + 'bbox_height_start.png', bbox_height_start)
-    np.save(fname.split('.png')[0] + 'bbox_height_end.png', bbox_height_end)
-    np.save(fname.split('.png')[0] + 'bbox_width_start.png', bbox_width_start)
-    np.save(fname.split('.png')[0] + 'bbox_width_end.png', bbox_width_end)
+    ## QUESTI QUI SONO QUELLI DEL PROTOTYPE IMAGE del training set vero e proprio (3a colonna del export di local analysis vis)
 
+    # p_img_bgr = cv2.imread(os.path.join(load_img_dir, 'epoch-'+str(epoch), 'prototype-img-original'+str(index)+'.png'))
+    p_img_bgr = np.load(os.path.join(load_img_dir, 'epoch-'+str(epoch), 'prototype-img-original'+str(index)+'.npy'))
+
+    # np.save(fname.split('.png')[0] + 'p_img_bgr.png', p_img_bgr)
+    
+    # saving bounding boxes of the original img (from training set) in one array
+    np.save(fname.split('.png')[0] + 'bboxes', bbox_height_start, bbox_height_end, bbox_width_start, bbox_width_end) 
 
     p_img_rgb_copy = p_img_bgr.copy()
     img_rect = np.ones((p_img_rgb_copy.shape[0], p_img_rgb_copy.shape[1], 3), np.uint8) * 125
-    cv2.rectangle(img_rect, (bbox_width_start, bbox_height_start), (bbox_width_end-1, bbox_height_end-1), color, 2)
+    cv2.rectangle(img_rect, (bbox_width_start, bbox_height_start), (bbox_width_end, bbox_height_end), color, 2)
 
     plt.imshow(p_img_rgb_copy)
     plt.imshow(img_rect, alpha=0.5)
@@ -230,25 +212,14 @@ def save_prototype_full_size(fname, epoch, index,
 def imsave_with_bbox(fname, img_rgb, bbox_height_start, bbox_height_end,
                      bbox_width_start, bbox_width_end, color=(0, 255, 225)):
     
-    # np.save(fname.split('.png')[0] + 'img_rgb.png', img_rgb)
-    # np.save(fname.split('.png')[0] + 'bbox_height_start.png', bbox_height_start)
-    # np.save(fname.split('.png')[0] + 'bbox_height_end.png', bbox_height_end)
-    # np.save(fname.split('.png')[0] + 'bbox_width_start.png', bbox_width_start)
-    # np.save(fname.split('.png')[0] + 'bbox_width_end.png', bbox_width_end)
+    ## questa funzione invece viene solo chiamata dalla img di test vera e propria
 
-    # img_bgr_uint8 = cv2.cvtColor(np.uint8(255*img_rgb), cv2.COLOR_RGB2BGR)
-    # cv2.rectangle(img_bgr_uint8, (bbox_width_start, bbox_height_start), (bbox_width_end-1, bbox_height_end-1), color, thickness=2)
-    # img_rgb_uint8 = img_bgr_uint8[...,::-1]
-    # img_rgb_float = np.float32(img_rgb_uint8) / 255
-
-    #plt.imshow(img_rgb_float)
-    #plt.axis('off')
-    # plt.imsave(fname, img_rgb_float)
-    # plt.imshow(img_rgb_float)
+    # saving bounding boxes of the TEST img (from TEST set) in one array
+    np.save(fname.split('.png')[0] + 'bboxes', bbox_height_start, bbox_height_end, bbox_width_start, bbox_width_end) 
 
     img_rgb_copy = img_rgb.copy()
     img_rect = np.ones((img_rgb.shape[0], img_rgb.shape[1], 3), np.uint8) * 125
-    cv2.rectangle(img_rect, (bbox_width_start, bbox_height_start), (bbox_width_end-1, bbox_height_end-1), color, 2)
+    cv2.rectangle(img_rect, (bbox_width_start, bbox_height_start), (bbox_width_end, bbox_height_end), color, 2)
 
     plt.imshow(img_rgb_copy, origin='lower')
     plt.imshow(img_rect, alpha=0.5, origin='lower')
@@ -364,6 +335,7 @@ for i in range(1,6):
     log('most highly activated patch by this prototype shown in the original image:'
         + str(os.path.join(save_analysis_path, 'most_activated_prototypes',
             'most_highly_activated_patch_in_original_img_by_top-%d_prototype.png' % i)))
+    
     imsave_with_bbox(fname=os.path.join(save_analysis_path, 'most_activated_prototypes',
                             'most_highly_activated_patch_in_original_img_by_top-%d_prototype.png' % i),
                      img_rgb=original_img,
@@ -560,8 +532,8 @@ for i,c in enumerate(topk_classes.detach().cpu().numpy()):
         #plt.axis('off')
         # plt.imsave(os.path.join(save_analysis_path, 'top-%d_class_prototypes' % (i+1), 'prototype_activation_map_by_top-%d_prototype_normed.png' % prototype_cnt), overlayed_img)
         
-        plt.imshow(original_img, cmap='gray', origin='lower')
-        plt.imshow(heatmap, alpha=0.5, origin='lower')
+        plt.imshow(original_img, cmap='gray') # qui origin lower me le faceva però al contrario del desiderata
+        plt.imshow(heatmap, alpha=0.5)
         plt.axis('off')
         plt.savefig(os.path.join(save_analysis_path, 'top-%d_class_prototypes' % (i+1), 'prototype_activation_map_by_top-%d_prototype_normed.png' % prototype_cnt), bbox_inches='tight')
 
