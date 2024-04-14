@@ -189,7 +189,7 @@ def save_prototype_original_img_with_bbox(fname, epoch, index,
     cv2.rectangle(img_rect, (bbox_width_start, bbox_height_start), (bbox_width_end, bbox_height_end), color, 2)
 
     plt.imshow(p_img_rgb_copy)
-    plt.imshow(img_rect, alpha=0.5)
+    plt.imshow(img_rect, alpha=0.5, origin='lower')
     plt.axis('off')
     plt.savefig(fname, bbox_inches='tight')
 
@@ -532,8 +532,8 @@ for i,c in enumerate(topk_classes.detach().cpu().numpy()):
         #plt.axis('off')
         # plt.imsave(os.path.join(save_analysis_path, 'top-%d_class_prototypes' % (i+1), 'prototype_activation_map_by_top-%d_prototype_normed.png' % prototype_cnt), overlayed_img)
         
-        plt.imshow(original_img, cmap='gray') # qui origin lower me le faceva però al contrario del desiderata
-        plt.imshow(heatmap, alpha=0.5)
+        plt.imshow(original_img, cmap='gray')
+        plt.imshow(heatmap, alpha=0.5, origin='lower')
         plt.axis('off')
         plt.savefig(os.path.join(save_analysis_path, 'top-%d_class_prototypes' % (i+1), 'prototype_activation_map_by_top-%d_prototype_normed.png' % prototype_cnt), bbox_inches='tight')
 
