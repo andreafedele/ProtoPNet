@@ -164,7 +164,7 @@ def save_prototype_self_activation(fname, epoch, index):
     p_img = plt.imread(os.path.join(load_img_dir, 'epoch-'+str(epoch), 'prototype-img-original_with_self_act'+str(index)+'.png'))
     #plt.axis('off')
     # plt.imsave(fname, p_img)
-    plt.imshow(p_img, origin='lower')
+    plt.imshow(p_img)
     plt.axis('off')
     plt.savefig(fname, bbox_inches='tight')
 
@@ -182,7 +182,7 @@ def save_prototype_original_img_with_bbox(fname, epoch, index,
     # np.save(fname.split('.png')[0] + 'p_img_bgr.png', p_img_bgr)
     
     # saving bounding boxes of the original img (from training set) in one array
-    np.save(fname.split('.png')[0] + 'bboxes', [bbox_height_start, bbox_height_end, bbox_width_start, bbox_width_end]) 
+    np.save(fname.split('.png')[0] + '_bboxes', [bbox_height_start, bbox_height_end, bbox_width_start, bbox_width_end]) 
 
     p_img_rgb_copy = p_img_bgr.copy()
     img_rect = np.ones((p_img_rgb_copy.shape[0], p_img_rgb_copy.shape[1], 3), np.uint8) * 125
@@ -215,7 +215,7 @@ def imsave_with_bbox(fname, img_rgb, bbox_height_start, bbox_height_end,
     ## questa funzione invece viene solo chiamata dalla img di test vera e propria
 
     # saving bounding boxes of the TEST img (from TEST set) in one array
-    np.save(fname.split('.png')[0] + 'bboxes', [bbox_height_start, bbox_height_end, bbox_width_start, bbox_width_end]) 
+    np.save(fname.split('.png')[0] + '_bboxes', [bbox_height_start, bbox_height_end, bbox_width_start, bbox_width_end]) 
 
     img_rgb_copy = img_rgb.copy()
     img_rect = np.ones((img_rgb.shape[0], img_rgb.shape[1], 3), np.uint8) * 125
@@ -420,7 +420,7 @@ for i,c in enumerate(topk_classes.detach().cpu().numpy()):
     _, sorted_indices_cls_act = torch.sort(class_prototype_activations)
 
     # cut to only top 5 prototypes for each of the top k classes
-    # sorted_indices_cls_act = sorted_indices_cls_act[0:5]
+    sorted_indices_cls_act = sorted_indices_cls_act[0:5]
 
     # print("sorted_indices_cls_act", sorted_indices_cls_act)
     
@@ -555,6 +555,6 @@ et = time.time()
 
 # get the execution time
 elapsed_time = et - st
-log('Execution time (seconds): ' + str(elapsed_time / 60))
+log('Execution time (minutes): ' + str(elapsed_time / 60))
 
 logclose()
