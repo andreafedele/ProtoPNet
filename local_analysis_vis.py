@@ -87,15 +87,6 @@ def main():
         for ax in [f_axes[r][5] for r in range(nrows)]:
             ax.annotate('=', **anno_opts_symb)
 
-        # get and plot data from source directory
-
-        # orig_img = Image.open(os.path.join(source_dir + 'original_img.png'))
-
-        # for ax in [f_axes[r][0] for r in range(nrows)]:
-        #     ax.imshow(orig_img)
-        #     ax.get_xaxis().set_ticks([])
-        #     ax.get_yaxis().set_ticks([])
-
         top_c_dir = os.path.join(source_dir + f'top-{top_c}_class_prototypes')
         for top_p in range(1,num_rows+1):
             #try:
