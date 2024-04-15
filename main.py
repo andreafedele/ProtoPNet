@@ -61,8 +61,11 @@ mel_spectrogram_transformation = torchaudio.transforms.MelSpectrogram(
     n_mels=n_mels
 )
 
+cut_dimensions = (n_mels, n_mels)
+img_size = n_mels # img_size to initiate ppnet depends on n_mels dimension (must be a square)
+
 # train dataset
-train_dataset = AudioDataset(train_annotation_dir, train_dir, sample_rate, num_samples, mel_spectrogram_transformation, power_or_db)
+train_dataset = AudioDataset(train_annotation_dir, train_dir, sample_rate, num_samples, mel_spectrogram_transformation, power_or_db, cut_dimensions)
 train_loader = torch.utils.data.DataLoader(
     train_dataset, batch_size=train_batch_size, shuffle=True,
     num_workers=4, pin_memory=False
@@ -71,8 +74,7 @@ print(f"There are {len(train_dataset)} samples in the train dataset.")
 
 # get dimensions from one training sample, so to cut augumented signals if necessary
 # ss, _ = train_dataset[0]
-cut_dimensions = (n_mels, n_mels)
-img_size = n_mels # img_size to initiate ppnet depends on n_mels dimension (must be a square)
+
 
 # train push dataset (train augmented)
 train_push_dataset = AudioDataset(train_push_annotation_dir, train_push_dir, sample_rate, num_samples, mel_spectrogram_transformation, power_or_db, cut_dimensions) 
@@ -83,7 +85,7 @@ train_push_loader = torch.utils.data.DataLoader(
 print(f"There are {len(train_push_dataset)} samples in the train push (augmented) dataset.")
 
 # test dataset
-test_dataset = AudioDataset(test_annotation_dir, test_dir, sample_rate, num_samples, mel_spectrogram_transformation, power_or_db)
+test_dataset = AudioDataset(test_annotation_dir, test_dir, sample_rate, num_samples, mel_spectrogram_transformation, power_or_db, cut_dimensions)
 print(f"There are {len(test_dataset)} samples in the test dataset.")
 test_loader = torch.utils.data.DataLoader(
     test_dataset, batch_size=test_batch_size, shuffle=False,
