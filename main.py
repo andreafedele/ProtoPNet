@@ -29,7 +29,7 @@ os.environ['CUDA_VISIBLE_DEVICES'] = args.gpuid[0]
 # print(os.environ['CUDA_VISIBLE_DEVICES'])
 
 # book keeping namings and code
-from settings import base_architecture, img_size, img_channels, prototype_shape, num_classes, \
+from settings import base_architecture, img_channels, prototype_shape, num_classes, \
                      prototype_activation_function, add_on_layers_type, experiment_run
 
 base_architecture_type = re.match('^[a-z]*', base_architecture).group(0)
@@ -70,8 +70,9 @@ train_loader = torch.utils.data.DataLoader(
 print(f"There are {len(train_dataset)} samples in the train dataset.")
 
 # get dimensions from one training sample, so to cut augumented signals if necessary
-ss, _ = train_dataset[0]
-cut_dimensions = (ss.shape[1], ss.shape[2])
+# ss, _ = train_dataset[0]
+cut_dimensions = (n_mels, n_mels)
+img_size = n_mels # img_size to initiate ppnet depends on n_mels dimension (must be a square)
 
 # train push dataset (train augmented)
 train_push_dataset = AudioDataset(train_push_annotation_dir, train_push_dir, sample_rate, num_samples, mel_spectrogram_transformation, power_or_db, cut_dimensions) 

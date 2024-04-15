@@ -1,5 +1,5 @@
 base_architecture = 'vgg19'
-img_size = 225
+# img_size = 225
 img_channels = 1
 prototype_shape = (500, 128, 1, 1)
 num_classes = 50
@@ -55,9 +55,9 @@ sample_rate = 41000
 num_samples = 41000
 
 # spectrogram conversion
-n_fft = 4096
-hop_length = 183
-n_mels = 225
+n_fft = 4096 * 3
+hop_length = 600
+n_mels = 300
 
 # power spectrogram or dB units spect
 power_or_db = 'd' # power spectrogram 'p', decibel dB units 'd'
