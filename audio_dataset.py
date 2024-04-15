@@ -26,18 +26,6 @@ class AudioDataset(Dataset):
     def __getitem__(self, index):
         audio_sample_path = self._get_audio_sample_path(index)
         label = self._get_audio_sample_label(index)
-        # signal, sr = torchaudio.load(audio_sample_path)
-
-        # # signal = signal.to(self.device)
-        # signal = self._resample(signal, sr)
-        # signal = self._cut_if_necessary(signal)
-        # signal = self._right_pad_if_necessary(signal)
-        # signal = self.transformation(signal)
-        # if self.power_or_db == 'd':
-        #     signal = librosa.power_to_db(signal)
-
-        # if self.cut_dimensions:
-        #     signal = signal[:, :self.cut_dimensions[0], :self.cut_dimensions[1]]
 
         signal = self._get_signal_from_audio_path(audio_sample_path)
         return signal, label
@@ -47,7 +35,7 @@ class AudioDataset(Dataset):
 
         # signal = signal.to(self.device)
         signal = self._resample(signal, sr)
-        signal = self._cut_if_necessary(signal)
+        # signal = self._cut_if_necessary(signal)
         signal = self._right_pad_if_necessary(signal)
         signal = self.transformation(signal)
         if self.power_or_db == 'd':
@@ -58,10 +46,10 @@ class AudioDataset(Dataset):
 
         return signal
 
-    def _cut_if_necessary(self, signal):
-        if signal.shape[1] > self.num_samples:
-            signal = signal[:, :self.num_samples]
-        return signal
+    # def _cut_if_necessary(self, signal):
+    #     if signal.shape[1] > self.num_samples:
+    #         signal = signal[:, :self.num_samples]
+    #     return signal
 
     def _right_pad_if_necessary(self, signal):
         length_signal = signal.shape[1]
