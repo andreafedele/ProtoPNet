@@ -259,9 +259,10 @@ def update_prototypes_on_batch(search_batch_input,
                 proto_bound_boxes[j, 5] = search_y[rf_prototype_j[0]]
 
             if dir_for_saving_prototypes is not None:
-                if prototype_self_act_filename_prefix is not None:
-                    # save the numpy array of the prototype self activation
-                    np.save(os.path.join(dir_for_saving_prototypes, prototype_self_act_filename_prefix + str(j) + '.npy'), proto_act_img_j)
+                ## questo self act .npy non lo uso mai ne in local analysis, ne nella soundification, lo commento per il momento per allegerire output della run
+                # if prototype_self_act_filename_prefix is not None:
+                #     # save the numpy array of the prototype self activation
+                #     np.save(os.path.join(dir_for_saving_prototypes, prototype_self_act_filename_prefix + str(j) + '.npy'), proto_act_img_j)
                 if prototype_img_filename_prefix is not None:
                     # save the spectrogram numpy itself
                     np.save(os.path.join(dir_for_saving_prototypes, prototype_img_filename_prefix + '-original' + str(j) + '.npy'), original_img_j)
