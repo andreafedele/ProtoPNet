@@ -93,8 +93,10 @@ mel_spectrogram_transformation = torchaudio.transforms.MelSpectrogram(
     n_mels=n_mels
 )
 
+cut_dimensions = (n_mels, n_mels)
+
 # test dataset
-test_dataset = AudioDataset(test_annotation_dir, test_dir, sample_rate, num_samples, mel_spectrogram_transformation, power_or_db)
+test_dataset = AudioDataset(test_annotation_dir, test_dir, sample_rate, num_samples, mel_spectrogram_transformation, power_or_db, cut_dimensions)
 print(f"There are {len(test_dataset)} samples in the test dataset.")
 
 # get the start time
