@@ -1,4 +1,5 @@
 import os
+import time
 import shutil
 
 import torch
@@ -97,6 +98,9 @@ log('training set size: {0}'.format(len(train_loader.dataset)))
 log('push set size: {0}'.format(len(train_push_loader.dataset)))
 log('test set size: {0}'.format(len(test_loader.dataset)))
 log('batch size: {0}'.format(train_batch_size))
+
+# get the start time
+st = time.time()
 
 # construct the model
 ppnet = model.construct_PPNet(base_architecture=base_architecture,
@@ -202,6 +206,14 @@ for epoch in range(num_train_epochs):
         save.save_model_w_condition(model=ppnet, model_dir=model_dir, model_name=str(epoch) + 'push', accu=accu, target_accu=target_accu, log=log)
 
         break
+
+
+# get the end time
+et = time.time()
+
+# get the execution time
+elapsed_time = et - st
+log('Execution time (minutes): ' + str(elapsed_time / 60))
 
 logclose()
 
