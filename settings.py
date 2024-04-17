@@ -38,9 +38,9 @@ coefs = {
 num_train_epochs = 1000
 num_warm_epochs = 5
 
-push_start = 10
-push_epochs = [i for i in range(num_train_epochs) if i % 10 == 0]
-last_layer_convex_optimizations = 10 # 20 si hard-coded by default in ProtoPNet
+push_start = 5
+push_epochs = [i for i in range(num_train_epochs) if i % 5 == 0]
+last_layer_convex_optimizations = 5 # 20 si hard-coded by default in ProtoPNet
 
 target_accu = 0.50
 
