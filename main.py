@@ -29,6 +29,8 @@ args = parser.parse_args()
 os.environ['CUDA_VISIBLE_DEVICES'] = args.gpuid[0]
 # print(os.environ['CUDA_VISIBLE_DEVICES'])
 
+torch.cuda.set_per_process_memory_fraction(0.5, torch.device('cuda:0'))
+
 # book keeping namings and code
 from settings import base_architecture, img_channels, prototype_shape, num_classes, \
                      prototype_activation_function, add_on_layers_type, experiment_run
