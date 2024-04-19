@@ -106,7 +106,7 @@ st = time.time()
 
 # construct the model
 ppnet = model.construct_PPNet(base_architecture=base_architecture,
-                              pretrained=True, img_size=img_size,
+                              pretrained=False, img_size=img_size,
                               prototype_shape=prototype_shape,
                               num_classes=num_classes,
                               prototype_activation_function=prototype_activation_function,
