@@ -23,12 +23,15 @@ from log import create_logger
 # from preprocess import mean, std, preprocess_input_function, undo_preprocess_input_function
 
 import argparse
-import pandas as pd
-import ast
+# import pandas as pd
+# import ast
 # import png
+import shutil
+
 
 import time
 import torchaudio
+import librosa
 from audio_dataset import AudioDataset
 
 k=3
@@ -47,6 +50,9 @@ test_image_name =  args.test_img_name[0] #'DP_AJOD_196544.npy' # 'DP_AAPR_R_MLO_
 test_image_label = args.test_img_label[0]
 
 test_image_path = os.path.join(test_image_dir, test_image_name)
+
+# saving path to training image dir
+train_image_dir = test_image_dir[:-4] + 'train'
 
 # load the model
 check_test_accu = False
@@ -552,11 +558,136 @@ else:
 print("saved in ", save_analysis_path)
 
 
+############################################################################
+## HELPERS FUNCTION TO RECOVER THE TRAINING AUDIO AND SAVE'EM AS A BUNDLE ##
+############################################################################
+
+def read_info(info_file, classname_dict, per_class=False):
+    sim_score_line = info_file.readline()
+    # connection_line = info_file.readline()
+    
+    sim_score = sim_score_line[len("similarity: "):-1]
+    # if per_class:
+    #     cc = connection_line[len('last layer connection: '):-1]
+    # else:
+    #     cc = connection_line[len('last layer connection with predicted class: '):-1]
+        
+    cc_dict = dict() 
+    for i in range(len(classname_dict)):
+        cc_line = info_file.readline()
+        circ_cc_str = cc_line[len('proto connection to class ' + str(i+1) + ':tensor('):-(len(", device='cuda:0', grad_fn=<SelectBackward>)")+2)]
+        circ_cc = float(circ_cc_str)
+        cc_dict[i+1] = circ_cc
+
+    class_of_p = max(cc_dict, key=lambda k: cc_dict[k])
+
+    return sim_score, cc_dict, class_of_p
+
+
+# la classe del prototipo la sfrutto per ridurre la ricerca solo nella relativa folder di training (e non su tutte le classi)
+def find_training_spectrogram_path(train_image_dir, spectrogram_to_find, prototype_belonging_class):
+    smallest_distance = np.inf
+    smallest_path = ''
+
+    for file in os.listdir(os.path.join(train_image_dir,str(prototype_belonging_class))):
+        filepath = os.path.join(train_image_dir,str(prototype_belonging_class),file)
+     
+        candidate, y, sr = get_signal(filepath, True)
+        dist = np.abs(candidate[:,:,0] - spectrogram_to_find[:,:,0]).sum()
+
+        if dist < smallest_distance:
+            smallest_distance = dist
+            smallest_path = filepath
+
+    return smallest_distance, smallest_path
+
+# spectrogram transformations to melspectrogram
+transformation = torchaudio.transforms.MelSpectrogram(
+    sample_rate=sample_rate,
+    n_fft=n_fft,
+    hop_length=hop_length,
+    n_mels=n_mels
+)
+
+def _right_pad_if_necessary(signal):
+    length_signal = signal.shape[1]
+    if length_signal < num_samples:
+        num_missing_samples = num_samples - length_signal
+        last_dim_padding = (0, num_missing_samples)
+        signal = torch.nn.functional.pad(signal, last_dim_padding)
+    return signal
+
+def _resample(signal, sr):
+    if sr != sample_rate:
+        resampler = torchaudio.transforms.Resample(sr, sample_rate)
+        signal = resampler(signal)
+    return signal
+
+def get_signal(path, transpose=True):
+    signal, sr = torchaudio.load(path)
+    y_loaded = signal.numpy().copy()
+    signal = _resample(signal, sr)
+    signal = _right_pad_if_necessary(signal)
+    signal = transformation(signal)
+    signal = librosa.power_to_db(signal)
+    signal = signal[:, :cut_dimensions[0], :cut_dimensions[1]]
+    if transpose:
+        signal = np.transpose(signal, (1, 2, 0)) # same transpose used during training
+    return signal, y_loaded, sr
+
+
+print("Moving clss-map dictionaries..")
+test_image_dir # ../datasets/esc50_split_10/test/5/
+# i dizionari sono in
+##  ../datasets/esc50_split_10/class_labels_map.json
+##  ../datasets/esc50_split_10/inv_class_labels_map.json
+
+split_test_dir = test_image_dir.split('/')
+src_class_labels_mp = os.path.join(split_test_dir[0], split_test_dir[1], split_test_dir[2], 'class_labels_map.json')
+src_inv_source_class_labels_mp = os.path.join(split_test_dir[0], split_test_dir[1], split_test_dir[2], 'inv_class_labels_map.json')
+
+shutil.copy(src_class_labels_mp, os.join(save_analysis_path, 'class_labels_map.json'))
+shutil.copy(src_inv_source_class_labels_mp, os.join(save_analysis_path, 'inv_class_labels_map.json'))
+
+# è la folder di output
+# save_analysis_path = './saved_models/vgg19/002_esc50_split10/' + '1-17092-B-27.wav'
+
+similar_audios = []
+print("Moving audios...")
+# creating class name dict 
+classname_dict = dict()
+for folder in next(os.walk(test_image_dir))[1]:
+    classname_dict[int(folder)] = folder
+
+prototype_dir = os.path.join(save_analysis_path, 'most_activated_prototypes')
+for top_p in range(1, 6): 
+    # info about simscore, class connections (towards predicted and prototype specific class)
+    p_info_file = open(os.path.join(prototype_dir, f'top-{top_p}_activated_prototype.txt'), 'r')
+    sim_score, cc_dict, top_cc = read_info(p_info_file, classname_dict, per_class=True)
+
+    # top-n activated prototype in training training spectrogram
+    training_spect = np.load(os.path.join(prototype_dir, f'top-{top_p}_activated_prototype_full_size.npy'))
+
+    # path for the original training audio sample 
+    smallest_abs_distance, smallest_path = find_training_spectrogram_path(train_image_dir, training_spect, top_cc)
+    similar_audios.append(smallest_path)
+    dst = os.path.join(prototype_dir, f'top-{top_p}_training_sample.wav')
+    shutil.copy(smallest_path, dst)
+
+# mi mancano i top k per le top 3 classi e l'export dei dizionari
+## anche il test wav file va portato nel boundle, con lo stesso identico nome
+
+# -> 1) fare un giro senza tutto questo codice per un dato modello e portarmelo in locale facendomi stampare i file path
+# -> 2) dopodicchè scommentare questa parte e farlo rigirare e vedere se i file path combaciano
+# 3) aggiungere in un export i smallest_path riga per riga interamente perchè seno perdo il filenaming ('mi interessa')?1
+
 # get the end time
 et = time.time()
 
 # get the execution time
 elapsed_time = et - st
 log('Execution time (minutes): ' + str(elapsed_time / 60))
+
+print("Similar audios", similar_audios)
 
 logclose()
