@@ -646,19 +646,20 @@ split_test_dir = test_image_dir.split('/')
 src_class_labels_mp = os.path.join(split_test_dir[0], split_test_dir[1], split_test_dir[2], 'class_labels_map.json')
 src_inv_source_class_labels_mp = os.path.join(split_test_dir[0], split_test_dir[1], split_test_dir[2], 'inv_class_labels_map.json')
 
-shutil.copy(src_class_labels_mp, os.join(save_analysis_path, 'class_labels_map.json'))
-shutil.copy(src_inv_source_class_labels_mp, os.join(save_analysis_path, 'inv_class_labels_map.json'))
+shutil.copy(src_class_labels_mp, os.path.join(save_analysis_path, 'class_labels_map.json'))
+shutil.copy(src_inv_source_class_labels_mp, os.path.join(save_analysis_path, 'inv_class_labels_map.json'))
 
 # è la folder di output
 # save_analysis_path = './saved_models/vgg19/002_esc50_split10/' + '1-17092-B-27.wav'
 
 similar_audios = []
-print("Moving audios...")
 # creating class name dict 
 classname_dict = dict()
 for folder in next(os.walk(test_image_dir))[1]:
     classname_dict[int(folder)] = folder
 
+print("Moving MOST ACTIVATED audios...")
+## MOST ACITVATED PROTOTYPES ##
 prototype_dir = os.path.join(save_analysis_path, 'most_activated_prototypes')
 for top_p in range(1, 6): 
     # info about simscore, class connections (towards predicted and prototype specific class)
@@ -674,7 +675,29 @@ for top_p in range(1, 6):
     dst = os.path.join(prototype_dir, f'top-{top_p}_training_sample.wav')
     shutil.copy(smallest_path, dst)
 
-# mi mancano i top k per le top 3 classi e l'export dei dizionari
+print("Moving TOP k for TOP N classes")
+## TOP 5 prototypes for TOP 3 classes ##
+for k in range(1,4):
+    prototype_dir = os.path.join(save_analysis_path, f'top-{k}_class_prototypes')
+    
+    for top_p in range(1,6):    
+        # info about simscore, class connections (towards predicted and prototype specific class)
+        p_info_file = open(os.path.join(prototype_dir, f'top-{top_p}_activated_prototype.txt'), 'r')
+        sim_score, cc_dict, top_cc = read_info(p_info_file, classname_dict, per_class=True)
+
+        # top-n activated prototype in training training spectrogram
+        training_spect = np.load(os.path.join(prototype_dir, f'top-{top_p}_activated_prototype_full_size.npy'))
+
+        # path for the original training audio sample 
+        smallest_abs_distance, smallest_path = find_training_spectrogram_path(train_image_dir, training_spect, top_cc)
+        similar_audios.append(smallest_path)
+        dst = os.path.join(prototype_dir, f'top-{top_p}_training_sample.wav')
+        shutil.copy(smallest_path, dst)
+
+
+print("Moving test sample")
+shutil.copy(test_image_path, os.path.join(save_analysis_path, test_image_name))
+
 ## anche il test wav file va portato nel boundle, con lo stesso identico nome
 
 # -> 1) fare un giro senza tutto questo codice per un dato modello e portarmelo in locale facendomi stampare i file path
