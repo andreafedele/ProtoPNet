@@ -27,6 +27,7 @@ import argparse
 # import ast
 # import png
 import shutil
+import json
 
 
 import time
@@ -647,7 +648,9 @@ shutil.copy(test_image_path, os.path.join(save_analysis_path, test_image_name))
 # saving path to training image dir
 train_image_dir = os.path.join(split_test_dir[0], split_test_dir[1], split_test_dir[2], 'train')  
 
-similar_audios = []
+# mapping between training samples recovered samples and their original filename in the dataset
+similar_audios = dict()
+
 # creating class name dict 
 classname_dict = dict()
 for folder in next(os.walk(os.path.join(split_test_dir[0], split_test_dir[1], split_test_dir[2], split_test_dir[3])))[1]:
@@ -666,7 +669,7 @@ for top_p in range(1, 6):
 
     # path for the original training audio sample 
     smallest_abs_distance, smallest_path = find_training_spectrogram_path(train_image_dir, training_spect, top_cc)
-    similar_audios.append(smallest_path)
+    similar_audios[os.path.join(prototype_dir, f'top-{top_p}_training_sample.wav')] = smallest_path
     dst = os.path.join(prototype_dir, f'top-{top_p}_training_sample.wav')
     shutil.copy(smallest_path, dst)
 
@@ -690,21 +693,14 @@ for k in range(1,4):
         shutil.copy(smallest_path, dst)
 
 
+log("*** Training samples recovered map ***")
+log(json.dumps(similar_audios))
 
-
-## anche il test wav file va portato nel boundle, con lo stesso identico nome
-
-# -> 1) fare un giro senza tutto questo codice per un dato modello e portarmelo in locale facendomi stampare i file path
-# -> 2) dopodicchè scommentare questa parte e farlo rigirare e vedere se i file path combaciano
-# 3) aggiungere in un export i smallest_path riga per riga interamente perchè seno perdo il filenaming ('mi interessa')?1
-
-# get the end time
 et = time.time()
 
 # get the execution time
 elapsed_time = et - st
 log('Execution time (minutes): ' + str(elapsed_time / 60))
 
-print("Similar audios", similar_audios)
 
 logclose()
