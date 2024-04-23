@@ -565,6 +565,7 @@ print("saved in ", save_analysis_path)
 def read_info(info_file, classname_dict, per_class=False):
     sim_score_line = info_file.readline()
     connection_line = info_file.readline()
+    proto_index_line = info_file.readline()
     
     sim_score = sim_score_line[len("similarity: "):-1]
     if per_class:
@@ -578,9 +579,7 @@ def read_info(info_file, classname_dict, per_class=False):
     for i in range(len(classname_dict)):
         cc_line = info_file.readline()
         circ_cc_str = cc_line[len('proto connection to class ' + str(i+1) + ':tensor('):-(len(", device='cuda:0', grad_fn=<SelectBackward>)")+2)]
-        print(circ_cc_str)
-        # circ_cc = float(circ_cc_str)
-        circ_cc = int(circ_cc_str)
+        circ_cc = float(circ_cc_str)
         cc_dict[i+1] = circ_cc
 
     print("cc_dict", cc_dict)
