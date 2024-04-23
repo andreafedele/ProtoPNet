@@ -656,7 +656,10 @@ classname_dict = dict()
 for folder in next(os.walk(os.path.join(split_test_dir[0], split_test_dir[1], split_test_dir[2], split_test_dir[3])))[1]:
     classname_dict[int(folder)] = folder
 
-print("Moving MOST ACTIVATED audios...")
+# utilized in backsoundification visualization
+with open(os.path.join(split_test_dir[0], split_test_dir[1], split_test_dir[2], 'classname_dict.json'), "w") as outfile: 
+    json.dump(classname_dict, outfile)
+
 ## MOST ACITVATED PROTOTYPES ##
 prototype_dir = os.path.join(save_analysis_path, 'most_activated_prototypes')
 for top_p in range(1, 6): 
@@ -669,11 +672,16 @@ for top_p in range(1, 6):
 
     # path for the original training audio sample 
     smallest_abs_distance, smallest_path = find_training_spectrogram_path(train_image_dir, training_spect, top_cc)
-    similar_audios[os.path.join(prototype_dir, f'top-{top_p}_training_sample.wav')] = smallest_path
     dst = os.path.join(prototype_dir, f'top-{top_p}_training_sample.wav')
+    similar_audios[dst] = smallest_path
     shutil.copy(smallest_path, dst)
 
-print("Moving TOP k for TOP N classes")
+log("*** MOST ACTIVATED Training samples recovered map ***")
+log(json.dumps(similar_audios))
+
+# mapping between training samples recovered samples and their original filename in the dataset
+similar_audios = dict()
+
 ## TOP 5 prototypes for TOP 3 classes ##
 for k in range(1,4):
     prototype_dir = os.path.join(save_analysis_path, f'top-{k}_class_prototypes')
@@ -688,13 +696,9 @@ for k in range(1,4):
 
         # path for the original training audio sample 
         smallest_abs_distance, smallest_path = find_training_spectrogram_path(train_image_dir, training_spect, top_cc)
-        similar_audios.append(smallest_path)
         dst = os.path.join(prototype_dir, f'top-{top_p}_training_sample.wav')
+        similar_audios[dst] = smallest_path
         shutil.copy(smallest_path, dst)
-
-
-log("*** Training samples recovered map ***")
-log(json.dumps(similar_audios))
 
 et = time.time()
 
