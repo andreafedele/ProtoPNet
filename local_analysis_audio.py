@@ -572,14 +572,16 @@ def read_info(info_file, classname_dict, per_class=False):
     else:
         cc = connection_line[len('last layer connection with predicted class: '):-1]
         
+    print("clssname_dict", classname_dict)
+    
     cc_dict = dict() 
     for i in range(len(classname_dict)):
         cc_line = info_file.readline()
         circ_cc_str = cc_line[len('proto connection to class ' + str(i+1) + ':tensor('):-(len(", device='cuda:0', grad_fn=<SelectBackward>)")+2)]
+        print(circ_cc_str)
         circ_cc = float(circ_cc_str)
         cc_dict[i+1] = circ_cc
 
-    print("clssname_dict", classname_dict)
     print("cc_dict", cc_dict)
 
     class_of_p = max(cc_dict, key=lambda k: cc_dict[k])
