@@ -657,7 +657,7 @@ for folder in next(os.walk(os.path.join(split_test_dir[0], split_test_dir[1], sp
     classname_dict[int(folder)] = folder
 
 # utilized in backsoundification visualization
-with open(os.path.join(split_test_dir[0], split_test_dir[1], split_test_dir[2], 'classname_dict.json'), "w") as outfile: 
+with open(os.path.join(save_analysis_path, 'classname_dict.json'), "w") as outfile: 
     json.dump(classname_dict, outfile)
 
 ## MOST ACITVATED PROTOTYPES ##
