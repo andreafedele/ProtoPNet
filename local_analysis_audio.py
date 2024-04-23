@@ -564,13 +564,13 @@ print("saved in ", save_analysis_path)
 
 def read_info(info_file, classname_dict, per_class=False):
     sim_score_line = info_file.readline()
-    # connection_line = info_file.readline()
+    connection_line = info_file.readline()
     
     sim_score = sim_score_line[len("similarity: "):-1]
-    # if per_class:
-    #     cc = connection_line[len('last layer connection: '):-1]
-    # else:
-    #     cc = connection_line[len('last layer connection with predicted class: '):-1]
+    if per_class:
+        cc = connection_line[len('last layer connection: '):-1]
+    else:
+        cc = connection_line[len('last layer connection with predicted class: '):-1]
         
     cc_dict = dict() 
     for i in range(len(classname_dict)):
@@ -578,6 +578,9 @@ def read_info(info_file, classname_dict, per_class=False):
         circ_cc_str = cc_line[len('proto connection to class ' + str(i+1) + ':tensor('):-(len(", device='cuda:0', grad_fn=<SelectBackward>)")+2)]
         circ_cc = float(circ_cc_str)
         cc_dict[i+1] = circ_cc
+
+    print("clssname_dict", classname_dict)
+    print("cc_dict", cc_dict)
 
     class_of_p = max(cc_dict, key=lambda k: cc_dict[k])
 
@@ -602,12 +605,12 @@ def find_training_spectrogram_path(train_image_dir, spectrogram_to_find, prototy
     return smallest_distance, smallest_path
 
 # spectrogram transformations to melspectrogram
-transformation = torchaudio.transforms.MelSpectrogram(
-    sample_rate=sample_rate,
-    n_fft=n_fft,
-    hop_length=hop_length,
-    n_mels=n_mels
-)
+# transformation = torchaudio.transforms.MelSpectrogram(
+#     sample_rate=sample_rate,
+#     n_fft=n_fft,
+#     hop_length=hop_length,
+#     n_mels=n_mels
+# )
 
 def _right_pad_if_necessary(signal):
     length_signal = signal.shape[1]
@@ -637,11 +640,6 @@ def get_signal(path, transpose=True):
 
 
 print("Moving clss-map dictionaries..")
-test_image_dir # ../datasets/esc50_split_10/test/5/
-# i dizionari sono in
-##  ../datasets/esc50_split_10/class_labels_map.json
-##  ../datasets/esc50_split_10/inv_class_labels_map.json
-
 split_test_dir = test_image_dir.split('/')
 src_class_labels_mp = os.path.join(split_test_dir[0], split_test_dir[1], split_test_dir[2], 'class_labels_map.json')
 src_inv_source_class_labels_mp = os.path.join(split_test_dir[0], split_test_dir[1], split_test_dir[2], 'inv_class_labels_map.json')
@@ -649,8 +647,8 @@ src_inv_source_class_labels_mp = os.path.join(split_test_dir[0], split_test_dir[
 shutil.copy(src_class_labels_mp, os.path.join(save_analysis_path, 'class_labels_map.json'))
 shutil.copy(src_inv_source_class_labels_mp, os.path.join(save_analysis_path, 'inv_class_labels_map.json'))
 
-# è la folder di output
-# save_analysis_path = './saved_models/vgg19/002_esc50_split10/' + '1-17092-B-27.wav'
+print("Moving test sample")
+shutil.copy(test_image_path, os.path.join(save_analysis_path, test_image_name))
 
 similar_audios = []
 # creating class name dict 
@@ -695,8 +693,7 @@ for k in range(1,4):
         shutil.copy(smallest_path, dst)
 
 
-print("Moving test sample")
-shutil.copy(test_image_path, os.path.join(save_analysis_path, test_image_name))
+
 
 ## anche il test wav file va portato nel boundle, con lo stesso identico nome
 
