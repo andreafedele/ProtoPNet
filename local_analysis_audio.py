@@ -51,9 +51,6 @@ test_image_label = args.test_img_label[0]
 
 test_image_path = os.path.join(test_image_dir, test_image_name)
 
-# saving path to training image dir
-train_image_dir = test_image_dir[:-4] + 'train'
-
 # load the model
 check_test_accu = False
 
@@ -572,8 +569,6 @@ def read_info(info_file, classname_dict, per_class=False):
         cc = connection_line[len('last layer connection: '):-1]
     else:
         cc = connection_line[len('last layer connection with predicted class: '):-1]
-        
-    print("clssname_dict", classname_dict)
 
     cc_dict = dict() 
     for i in range(len(classname_dict)):
@@ -581,8 +576,6 @@ def read_info(info_file, classname_dict, per_class=False):
         circ_cc_str = cc_line[len('proto connection to class ' + str(i+1) + ':tensor('):-(len(", device='cuda:0', grad_fn=<SelectBackward>)")+2)]
         circ_cc = float(circ_cc_str)
         cc_dict[i+1] = circ_cc
-
-    print("cc_dict", cc_dict)
 
     class_of_p = max(cc_dict, key=lambda k: cc_dict[k])
 
@@ -651,6 +644,8 @@ shutil.copy(src_inv_source_class_labels_mp, os.path.join(save_analysis_path, 'in
 # moving test sample
 shutil.copy(test_image_path, os.path.join(save_analysis_path, test_image_name))
 
+# saving path to training image dir
+train_image_dir = os.path.join(split_test_dir[0], split_test_dir[1], split_test_dir[2], 'train')  
 
 similar_audios = []
 # creating class name dict 
