@@ -631,7 +631,7 @@ def get_signal(path, transpose=True):
     y_loaded = signal.numpy().copy()
     signal = _resample(signal, sr)
     signal = _right_pad_if_necessary(signal)
-    signal = transformation(signal)
+    signal = mel_spectrogram_transformation(signal)
     signal = librosa.power_to_db(signal)
     signal = signal[:, :cut_dimensions[0], :cut_dimensions[1]]
     if transpose:
@@ -653,7 +653,7 @@ shutil.copy(test_image_path, os.path.join(save_analysis_path, test_image_name))
 similar_audios = []
 # creating class name dict 
 classname_dict = dict()
-for folder in next(os.walk(test_image_dir))[1]:
+for folder in next(os.walk(os.path.join(split_test_dir[0], split_test_dir[1], split_test_dir[2], split_test_dir[3])))[1]:
     classname_dict[int(folder)] = folder
 
 print("Moving MOST ACTIVATED audios...")
