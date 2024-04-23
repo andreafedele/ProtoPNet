@@ -573,13 +573,14 @@ def read_info(info_file, classname_dict, per_class=False):
         cc = connection_line[len('last layer connection with predicted class: '):-1]
         
     print("clssname_dict", classname_dict)
-    
+
     cc_dict = dict() 
     for i in range(len(classname_dict)):
         cc_line = info_file.readline()
         circ_cc_str = cc_line[len('proto connection to class ' + str(i+1) + ':tensor('):-(len(", device='cuda:0', grad_fn=<SelectBackward>)")+2)]
         print(circ_cc_str)
-        circ_cc = float(circ_cc_str)
+        # circ_cc = float(circ_cc_str)
+        circ_cc = int(circ_cc_str)
         cc_dict[i+1] = circ_cc
 
     print("cc_dict", cc_dict)
@@ -641,16 +642,16 @@ def get_signal(path, transpose=True):
     return signal, y_loaded, sr
 
 
-print("Moving clss-map dictionaries..")
+# moving class map dictionaries
 split_test_dir = test_image_dir.split('/')
 src_class_labels_mp = os.path.join(split_test_dir[0], split_test_dir[1], split_test_dir[2], 'class_labels_map.json')
 src_inv_source_class_labels_mp = os.path.join(split_test_dir[0], split_test_dir[1], split_test_dir[2], 'inv_class_labels_map.json')
-
 shutil.copy(src_class_labels_mp, os.path.join(save_analysis_path, 'class_labels_map.json'))
 shutil.copy(src_inv_source_class_labels_mp, os.path.join(save_analysis_path, 'inv_class_labels_map.json'))
 
-print("Moving test sample")
+# moving test sample
 shutil.copy(test_image_path, os.path.join(save_analysis_path, test_image_name))
+
 
 similar_audios = []
 # creating class name dict 
